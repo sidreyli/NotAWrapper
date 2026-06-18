@@ -1,0 +1,42 @@
+from fastapi import FastAPI
+from contextlib import asynccontextmanager
+import anthropic
+from backend.config import settings
+from backend.api.middleware import setup_middleware
+from backend.api.routes import intake, eligibility, explain, cliff, resources
+from backend.modules.intake.conversation import IntakeConversation
+from backend.modules.explainer.action_plan import ActionPlanGenerator
+from backend.modules.rules_engine.engine import EligibilityEngine
+from backend.modules.cliff.calculator import CliffCalculator
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Initialize singletons
+    client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
+    app.state.intake = IntakeConversation(client)
+    app.state.explainer = ActionPlanGenerator(client)
+    app.state.engine = EligibilityEngine()
+    app.state.cliff = CliffCalculator()
+    yield
+    # Cleanup (none needed for this app)
+
+
+app = FastAPI(
+    title="Benefits Navigator API",
+    version="1.0.0",
+    lifespan=lifespan
+)
+
+setup_middleware(app)
+
+app.include_router(intake.router, prefix="/api/intake", tags=["intake"])
+app.include_router(eligibility.router, prefix="/api/eligibility", tags=["eligibility"])
+app.include_router(explain.router, prefix="/api/explain", tags=["explain"])
+app.include_router(cliff.router, prefix="/api/cliff", tags=["cliff"])
+app.include_router(resources.router, prefix="/api/resources", tags=["resources"])
+
+
+@app.get("/health")
+async def health():
+    return {"status": "ok", "version": "1.0.0"}
