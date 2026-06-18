@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+
+# Environment / secrets
+.env
+*.env
+!.env.example
+
+# Frontend (not tracked in this repo)
+frontend/
+
+# Tooling artifacts
+.playwright-mcp/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
