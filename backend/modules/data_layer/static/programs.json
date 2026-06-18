@@ -1,0 +1,141 @@
+{
+  "snap": {
+    "id": "snap",
+    "name": "SNAP",
+    "full_name": "Supplemental Nutrition Assistance Program",
+    "colloquial": "Food Stamps",
+    "category": "food",
+    "description": "Monthly electronic benefit to help purchase groceries.",
+    "national_apply_url": "https://www.fns.usda.gov/snap/state-directory",
+    "more_info_url": "https://www.fns.usda.gov/snap/recipient/eligibility",
+    "data_source": "USDA Food and Nutrition Service",
+    "data_as_of": "FY2026 (October 2025)",
+    "processing_time_days": "30 (7 if expedited)",
+    "renewal_period": "12 months (24 months for some households)",
+    "imputed_monthly_value_note": "Use maximum_allotments_monthly from snap_2026.json for cliff modeling",
+    "required_documents": [
+      "Photo ID (driver's license, state ID, or passport)",
+      "Proof of residency (utility bill, lease, or recent mail)",
+      "Social Security numbers for all household members applying",
+      "Proof of income (recent pay stubs, employer letter, or most recent tax return)",
+      "Proof of allowable expenses (rent/mortgage, utilities, childcare if claiming deductions)"
+    ]
+  },
+  "medicaid": {
+    "id": "medicaid",
+    "name": "Medicaid",
+    "full_name": "Medicaid Health Coverage",
+    "colloquial": "Medicaid",
+    "category": "health",
+    "description": "Free or low-cost comprehensive health coverage for adults.",
+    "national_apply_url": "https://www.healthcare.gov/medicaid-chip/",
+    "more_info_url": "https://www.medicaid.gov/medicaid/eligibility/index.html",
+    "data_source": "Centers for Medicare & Medicaid Services (CMS)",
+    "data_as_of": "2026",
+    "processing_time_days": "45 (90 if disability involved)",
+    "renewal_period": "Annual",
+    "imputed_monthly_value": 400,
+    "imputed_monthly_value_note": "Approximate value of adult Medicaid coverage for cliff modeling. Not a real dollar benefit.",
+    "required_documents": [
+      "Photo ID",
+      "Proof of income (pay stubs, tax return, or signed zero-income statement)",
+      "Social Security number",
+      "Proof of residency",
+      "Immigration documentation if applicable"
+    ]
+  },
+  "chip": {
+    "id": "chip",
+    "name": "CHIP",
+    "full_name": "Children's Health Insurance Program",
+    "colloquial": "CHIP",
+    "category": "health",
+    "description": "Low-cost health coverage for children in households earning too much for Medicaid.",
+    "national_apply_url": "https://www.healthcare.gov/medicaid-chip/",
+    "more_info_url": "https://www.medicaid.gov/chip/index.html",
+    "data_source": "Centers for Medicare & Medicaid Services (CMS)",
+    "data_as_of": "2026",
+    "processing_time_days": "45",
+    "renewal_period": "Annual",
+    "imputed_monthly_value_per_child": 200,
+    "imputed_monthly_value_note": "Approximate value of CHIP coverage per child for cliff modeling.",
+    "required_documents": [
+      "Child's birth certificate",
+      "Child's Social Security number",
+      "Proof of household income",
+      "Proof of residency",
+      "Parent or guardian photo ID"
+    ]
+  },
+  "liheap": {
+    "id": "liheap",
+    "name": "LIHEAP",
+    "full_name": "Low Income Home Energy Assistance Program",
+    "colloquial": "Energy Assistance",
+    "category": "utilities",
+    "description": "Help paying home heating and cooling energy bills.",
+    "national_apply_url": "https://www.acf.hhs.gov/ocs/programs/liheap/find-local-help",
+    "more_info_url": "https://www.acf.hhs.gov/ocs/programs/liheap",
+    "data_source": "HHS Office of Community Services",
+    "data_as_of": "2026",
+    "processing_time_days": "Varies — apply early, funds are limited",
+    "renewal_period": "Annual — reapply each heating/cooling season",
+    "imputed_annual_value_avg": 700,
+    "imputed_monthly_value": 58,
+    "imputed_monthly_value_note": "Approximate average LIHEAP benefit annualized. Actual varies widely by state.",
+    "required_documents": [
+      "Photo ID",
+      "Proof of income for all household members (last 30 days)",
+      "Most recent utility bills (heating and/or cooling)",
+      "Social Security numbers for all household members",
+      "Proof of residency (lease or utility bill in your name)"
+    ]
+  },
+  "wic": {
+    "id": "wic",
+    "name": "WIC",
+    "full_name": "Special Supplemental Nutrition Program for Women, Infants, and Children",
+    "colloquial": "WIC",
+    "category": "food",
+    "description": "Supplemental food, nutrition education, and healthcare referrals for pregnant women, new mothers, and young children.",
+    "national_apply_url": "https://www.fns.usda.gov/wic/wic-contacts",
+    "more_info_url": "https://www.fns.usda.gov/wic",
+    "data_source": "USDA Food and Nutrition Service",
+    "data_as_of": "2026",
+    "processing_time_days": "Same day or next day at WIC clinic",
+    "renewal_period": "Every 6 months; ends when child turns 5",
+    "imputed_monthly_value_per_person": 60,
+    "imputed_monthly_value_note": "Approximate WIC food benefit value per eligible person per month.",
+    "required_documents": [
+      "Proof of identity (photo ID or child's birth certificate)",
+      "Proof of residency",
+      "Proof of income or participation in SNAP/Medicaid/TANF (auto-income-eligible)",
+      "Proof of pregnancy (for pregnant women — doctor's note or due date)",
+      "Child's most recent immunization records (recommended)"
+    ]
+  },
+  "tanf": {
+    "id": "tanf",
+    "name": "TANF",
+    "full_name": "Temporary Assistance for Needy Families",
+    "colloquial": "Cash Assistance",
+    "category": "cash",
+    "description": "Short-term cash assistance for families with children. Rules vary significantly by state.",
+    "national_apply_url": "https://www.acf.hhs.gov/ofa/programs/tanf",
+    "more_info_url": "https://www.acf.hhs.gov/ofa/programs/tanf",
+    "data_source": "HHS Administration for Children and Families",
+    "data_as_of": "2026",
+    "processing_time_days": "30–45 (varies by state)",
+    "renewal_period": "Varies by state; federal lifetime limit of 60 months",
+    "imputed_monthly_value": null,
+    "imputed_monthly_value_note": "Do not include in cliff modeling — too state-variable. Flag as candidate, direct to state agency.",
+    "required_documents": [
+      "Photo ID for all adults in household",
+      "Birth certificates for all children",
+      "Social Security numbers for all household members",
+      "Proof of income (or zero-income statement)",
+      "Proof of residency",
+      "Documentation of housing situation"
+    ]
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "source": "HHS ASPE Poverty Guidelines",
+  "url": "https://aspe.hhs.gov/topics/poverty-economic-mobility/poverty-guidelines",
+  "effective_date": "2026-01-14",
+  "federal_register_date": "2026-01-15",
+  "contiguous_48_and_dc": {
+    "base": 15960,
+    "increment_per_person": 5680,
+    "by_size": {
+      "1": 15960, "2": 21640, "3": 27320, "4": 33000,
+      "5": 38680, "6": 44360, "7": 50040, "8": 55720
+    }
+  },
+  "alaska": {
+    "base": 19950,
+    "increment_per_person": 7090,
+    "by_size": {
+      "1": 19950, "2": 27040, "3": 34130, "4": 41220,
+      "5": 48310, "6": 55400, "7": 62490, "8": 69580
+    }
+  },
+  "hawaii": {
+    "base": 18360,
+    "increment_per_person": 6530,
+    "by_size": {
+      "1": 18360, "2": 24890, "3": 31420, "4": 37950,
+      "5": 44480, "6": 51010, "7": 57540, "8": 64070
+    }
+  }
+}

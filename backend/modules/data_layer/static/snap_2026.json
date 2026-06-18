@@ -1,0 +1,35 @@
+{
+  "source": "USDA Food and Nutrition Service",
+  "url": "https://www.fns.usda.gov/snap/recipient/eligibility",
+  "fiscal_year": "FY2026",
+  "period": "October 1, 2025 – September 30, 2026",
+  "verification_note": "Verify current values at fns.usda.gov before production use",
+  "gross_income_limits_monthly": {
+    "note": "130% of 2025 FPL. Applies to most households.",
+    "1": 1695, "2": 2290, "3": 2885, "4": 3479,
+    "5": 4074, "6": 4669, "7": 5263, "8": 5858,
+    "increment_per_additional": 595
+  },
+  "net_income_limits_monthly": {
+    "note": "100% of 2025 FPL. After allowable deductions.",
+    "1": 1304, "2": 1763, "3": 2219, "4": 2677,
+    "5": 3135, "6": 3592, "7": 4050, "8": 4508,
+    "increment_per_additional": 458
+  },
+  "maximum_allotments_monthly": {
+    "note": "Maximum SNAP benefit. Verify at fns.usda.gov.",
+    "1": 292, "2": 536, "3": 768, "4": 975,
+    "5": 1155, "6": 1386, "7": 1532, "8": 1751,
+    "increment_per_additional": 219
+  },
+  "standard_deductions_monthly": {
+    "note": "Standard deduction by household size.",
+    "1": 204, "2": 204, "3": 204, "4": 217, "5": 254, "6": 291
+  },
+  "asset_limits": {
+    "standard_households": 4500,
+    "elderly_or_disabled_member": 9000
+  },
+  "earned_income_deduction_rate": 0.20,
+  "benefit_calculation_note": "Benefit = max(0, max_allotment - (net_income * 0.3)). net_income = gross - (earned_income * 0.20) - standard_deduction."
+}
