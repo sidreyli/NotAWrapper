@@ -1510,7 +1510,7 @@ All functions should handle the standard error response format:
 - Tagline or brief explanation (1–2 sentences about what the tool does)
 - Button to start the AI chat intake flow
 - Button to open the case worker (structured form) mode
-- Language selector: English / Español
+- Language selector: English default, multiple languages dropdown
 - Note that the tool currently covers CA, TX, NY, FL, and IL only
 
 **API calls:** None on this page.
@@ -1589,6 +1589,7 @@ No AI conversation — direct form submission.
 
 ---
 
+Do not actually recreate a cliff visualisation
 ### Page: Cliff Visualization `/cliff` or similar
 
 **Purpose:** Show the benefits cliff — how net resources change as monthly income rises.
@@ -1613,9 +1614,9 @@ No AI conversation — direct form submission.
 
 ---
 
-### Internationalization (EN / ES)
+### Internationalization 
 
-The frontend must support English and Spanish.
+The frontend must support English and numerous languages
 
 - All static UI strings (button labels, page titles, error messages, status labels)
   must be translatable. The method (i18n library, JSON files, inline, etc.) is left

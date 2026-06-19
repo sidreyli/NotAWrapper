@@ -1,0 +1,183 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Benefits Navigator — design system
+   Civic case-dossier: cool paper, deep navy ink, brass seal.
+   Light mode only. No gradients-as-decoration.
+   ============================================================ */
+
+@theme {
+  /* surfaces */
+  --color-paper: #f3f4f7;
+  --color-paper-2: #eaecf1;
+  --color-surface: #ffffff;
+  --color-surface-2: #fbfbfd;
+
+  /* ink + navy */
+  --color-ink: #0a1726;
+  --color-navy: #0c2340;
+  --color-navy-700: #15355c;
+  --color-navy-600: #1e4a7c;
+  --color-navy-300: #91a8c4;
+  --color-muted: #56657c;
+  --color-faint: #8190a4;
+
+  /* lines */
+  --color-line: #e3e6ec;
+  --color-line-strong: #d2d8e1;
+
+  /* brass — the civic seal accent (used sparingly) */
+  --color-brass: #b08736;
+  --color-brass-soft: #c7a566;
+  --color-brass-wash: #f4eee0;
+
+  /* status — muted, document-grade */
+  --color-ok: #2f6b4f;
+  --color-ok-wash: #e9f1ec;
+  --color-maybe: #9a6a1f;
+  --color-maybe-wash: #f6efe0;
+  --color-none: #6b7686;
+  --color-none-wash: #eef0f3;
+  --color-enrolled: #2b5b88;
+  --color-enrolled-wash: #e8f0f6;
+  --color-review: #b65a1c;
+  --color-review-wash: #f7ebe1;
+
+  /* type */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* radius */
+  --radius-sm: 7px;
+  --radius-md: 11px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+
+  /* shadows — soft, layered, never heavy */
+  --shadow-xs: 0 1px 2px rgba(12, 35, 64, 0.05);
+  --shadow-card: 0 1px 1px rgba(12, 35, 64, 0.04), 0 8px 24px -12px rgba(12, 35, 64, 0.14);
+  --shadow-lift: 0 2px 4px rgba(12, 35, 64, 0.05), 0 24px 48px -20px rgba(12, 35, 64, 0.22);
+  --shadow-navy: 0 18px 40px -18px rgba(12, 35, 64, 0.45);
+
+  /* easing */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-line);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv05" 1, "ss01" 1;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--color-navy);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-navy-600);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
+  h1, h2, h3, h4 {
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--color-navy);
+  }
+}
+
+@layer components {
+  .container-page {
+    width: 100%;
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+  @media (min-width: 768px) {
+    .container-page { padding-inline: 2.5rem; }
+  }
+
+  /* mono eyebrow — the dossier file-marker */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-brass);
+    font-weight: 500;
+  }
+
+  .eyebrow-muted {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-faint);
+    font-weight: 500;
+  }
+
+  /* a thin brass keyline */
+  .keyline-brass {
+    height: 1px;
+    background: linear-gradient(90deg, var(--color-brass-soft), transparent);
+  }
+
+  /* fine engineering grid — ambient, very subtle */
+  .grid-paper {
+    background-image:
+      linear-gradient(to right, rgba(12, 35, 64, 0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(12, 35, 64, 0.035) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+
+  .hairline-top { border-top: 1px solid var(--color-line); }
+  .hairline-b { border-bottom: 1px solid var(--color-line); }
+
+  .num {
+    font-family: var(--font-mono);
+    font-feature-settings: "tnum" 1;
+    letter-spacing: -0.01em;
+  }
+}
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+  .text-pretty { text-wrap: pretty; }
+
+  .mask-fade-x {
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 38s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-marquee { animation: none; }
+}

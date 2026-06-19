@@ -11,8 +11,7 @@ venv/
 *.env
 !.env.example
 
-# Frontend (not tracked in this repo)
-frontend/
+
 
 # Tooling artifacts
 .playwright-mcp/
