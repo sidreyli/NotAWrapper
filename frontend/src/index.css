@@ -2,69 +2,149 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  color: #111827;
-  background: #f7f9fa;
-  font-family: "Source Sans 3", Inter, ui-sans-serif, system-ui, sans-serif;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-  min-width: 320px;
-  background: #f7f9fa;
-}
-
-button,
-input,
-select {
-  font: inherit;
-}
-
-.display-heading {
-  font-family: "Arial Narrow", "Roboto Condensed", "Source Sans 3", Arial, sans-serif;
-  font-weight: 900;
-  letter-spacing: 0.01em;
-  text-transform: uppercase;
-  line-height: 0.98;
-}
-
-.line-icon {
-  stroke: currentColor;
-  stroke-width: 2.2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  fill: none;
-}
-
-.focus-ring {
-  outline: 3px solid rgba(32, 197, 198, 0.45);
-  outline-offset: 3px;
-}
-
-@keyframes msg-in {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
+@layer base {
+  :root {
+    /* shadcn tokens mapped to the "Daybreak" palette (light only) */
+    --background: #f3f6f3;
+    --foreground: #0a1c16;
+    --card: #ffffff;
+    --card-foreground: #0a1c16;
+    --popover: #ffffff;
+    --popover-foreground: #0a1c16;
+    --primary: #0c7a57;
+    --primary-foreground: #f4fbf7;
+    --secondary: #e1f3e9;
+    --secondary-foreground: #075138;
+    --muted: #eef2ee;
+    --muted-foreground: #5b6e64;
+    --accent: #fcf4e6;
+    --accent-foreground: #7a4e0c;
+    --destructive: #b4452e;
+    --destructive-foreground: #fff7f4;
+    --border: #e2e9e3;
+    --input: #dfe7e1;
+    --ring: #0c7a57;
+    --radius: 1rem;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+    font-feature-settings: "ss01", "cv01";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: #cdebdb;
+    color: #063a29;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: "Fraunces", ui-serif, Georgia, serif;
+    font-optical-sizing: auto;
+  }
+
+  /* Premium focus ring — visible, on-brand, keyboard-only */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+    border-radius: 6px;
   }
 }
 
-.animate-msg-in {
-  animation: msg-in 0.28s ease-out both;
+@layer components {
+  /* The signature: a slow living aurora mesh behind the hero */
+  .aurora {
+    position: absolute;
+    inset: -25%;
+    z-index: 0;
+    filter: blur(56px) saturate(125%);
+    opacity: 0.85;
+    pointer-events: none;
+  }
+  .aurora::before,
+  .aurora::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(34% 42% at 22% 30%, rgba(47, 162, 119, 0.55), transparent 60%),
+      radial-gradient(30% 38% at 78% 22%, rgba(225, 150, 43, 0.42), transparent 62%),
+      radial-gradient(40% 46% at 64% 78%, rgba(12, 122, 87, 0.40), transparent 60%),
+      radial-gradient(28% 34% at 32% 82%, rgba(124, 107, 214, 0.28), transparent 60%);
+  }
+  .aurora::before {
+    animation: aurora-drift 22s ease-in-out infinite;
+  }
+  .aurora::after {
+    animation: aurora-drift 30s ease-in-out infinite reverse;
+    opacity: 0.7;
+  }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+  }
+
+  /* Deep-emerald frosted bar for the chrome on inner (working) pages, tied to the
+     shader/GuidePanel darks so the topbar belongs to the same world as the page. */
+  .glass-emerald {
+    background: linear-gradient(180deg, rgba(6, 33, 23, 0.82), rgba(7, 21, 15, 0.8));
+    backdrop-filter: blur(18px) saturate(150%);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+  }
+
+  .grain {
+    background-image: radial-gradient(rgba(10, 28, 22, 0.035) 1px, transparent 1px);
+    background-size: 4px 4px;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Animated emerald→gold underline accent for display words */
+  .ink-underline {
+    background-image: linear-gradient(120deg, #0c7a57, #2fa277 38%, #e1962b);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
-  .animate-msg-in {
-    animation: none;
+  .aurora::before,
+  .aurora::after,
+  .animate-aurora-drift,
+  .animate-fade-up,
+  .animate-msg-in,
+  .animate-marquee {
+    animation: none !important;
   }
 }

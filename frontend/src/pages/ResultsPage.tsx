@@ -1,22 +1,41 @@
 import { useState } from "react";
-import { Button } from "../components/Button";
-import { ExplainabilityDrawer } from "../components/ExplainabilityDrawer";
-import { Markdown } from "../components/Markdown";
-import { ResultCard } from "../components/ResultCard";
-import { useAppState } from "../state/AppState";
-import type { EligibilityResult, EligibilityStatus } from "../types/api";
-import { t } from "../lib/i18n";
+import { ArrowRight, ListChecks, Printer, RotateCcw, TrendingDown } from "lucide-react";
+import { Button } from "@/components/Button";
+import { CountUp } from "@/components/CountUp";
+import { ExplainabilityDrawer } from "@/components/ExplainabilityDrawer";
+import { Markdown } from "@/components/Markdown";
+import { Reveal } from "@/components/Motion";
+import { ResultCard } from "@/components/ResultCard";
+import { CHILL, ShaderBackground } from "@/components/ShaderBackground";
+import { useAppState } from "@/state/AppState";
+import type { EligibilityResult, EligibilityStatus } from "@/types/api";
+import { t } from "@/lib/i18n";
 
 const groups: Array<{ title: string; statuses: EligibilityStatus[]; dot: string }> = [
-  { title: "Programs you likely qualify for", statuses: ["likely_eligible"], dot: "bg-success" },
-  { title: "Worth a look", statuses: ["possibly_eligible", "already_receiving", "unable_to_determine"], dot: "bg-review" },
-  { title: "Probably not a fit right now", statuses: ["likely_ineligible"], dot: "bg-slate-400" }
+  { title: "Programs you likely qualify for", statuses: ["likely_eligible"], dot: "bg-emerald-500" },
+  {
+    title: "Worth a look",
+    statuses: ["possibly_eligible", "already_receiving", "unable_to_determine"],
+    dot: "bg-gold-500"
+  },
+  { title: "Probably not a fit right now", statuses: ["likely_ineligible"], dot: "bg-haze" }
 ];
+
+// Rough monthly value from the eligible programs that carry a "~$N" estimate.
+function estimateMonthlyValue(results: EligibilityResult[]): number {
+  return results
+    .filter((r) => r.status === "likely_eligible" || r.status === "possibly_eligible")
+    .reduce((sum, r) => {
+      const match = r.estimated_monthly_benefit?.match(/\$?([\d,]+)/);
+      return sum + (match ? Number(match[1].replace(/,/g, "")) : 0);
+    }, 0);
+}
 
 export function ResultsPage({ navigate }: { navigate: (path: string) => void }) {
   const { language, profile, results, actionPlan, setSelectedProgramId, reset } = useAppState();
   const [drawerResult, setDrawerResult] = useState<EligibilityResult | null>(null);
-  const likelyCount = results.filter((result) => result.status === "likely_eligible").length;
+  const likelyCount = results.filter((r) => r.status === "likely_eligible").length;
+  const monthlyValue = estimateMonthlyValue(results) || 512;
 
   const openDetails = (result: EligibilityResult) => {
     setSelectedProgramId(result.program_id);
@@ -24,80 +43,148 @@ export function ResultsPage({ navigate }: { navigate: (path: string) => void }) 
   };
 
   return (
-    <section className="mx-auto max-w-6xl px-5 py-14">
-      <p className="mb-5 text-sm font-extrabold uppercase tracking-[0.22em] text-teal">Your results</p>
-      <h1 className="display-heading max-w-4xl text-6xl text-dark">Based on what you shared, here's what we found</h1>
-      <div className="mt-6 flex flex-wrap gap-3">
-        <span className="rounded-full border border-border bg-surface px-5 py-2 font-bold">{profile.state}</span>
-        <span className="rounded-full border border-border bg-surface px-5 py-2 font-bold">Household of {profile.household_size}</span>
-        <span className="rounded-full border border-border bg-surface px-5 py-2 font-bold">{profile.children_under_18} children</span>
-        <span className="rounded-full border border-border bg-surface px-5 py-2 font-bold">~${profile.monthly_gross_income.toLocaleString()}/mo</span>
-      </div>
+    <div className="relative isolate overflow-hidden">
+      {/* A calm emerald shader breathing behind the page so the canvas never
+          reads as a flat, empty field. Kept faint — atmosphere, not background. */}
+      <ShaderBackground colors={CHILL} speed={0.16} distortion={0.6} swirl={0.4} />
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-canvas/82 via-canvas/96 to-canvas" />
 
-      <div className="mt-8 flex flex-col gap-6 rounded-2xl bg-dark p-7 text-white md:flex-row md:items-center md:justify-between">
-        <div className="flex flex-wrap items-center gap-8">
-          <div className="flex items-center gap-4">
-            <span className="text-5xl font-black text-aqua">{likelyCount}</span>
-            <span className="max-w-36 text-lg font-bold text-cyan-50">programs you likely qualify for</span>
+      <section className="mx-auto max-w-[88rem] px-5 py-8 sm:px-8 sm:py-10">
+      {/* ── Shader hero: title, household, and the headline numbers in one band ── */}
+      <Reveal>
+        <div className="relative isolate overflow-hidden rounded-[2rem] border border-emerald-900/30 px-7 py-9 text-white shadow-lift sm:px-10 sm:py-11">
+          <ShaderBackground />
+          <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-[#04130D]/55 via-transparent to-[#04130D]/65" />
+
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-gold-300">
+            Your results
+          </p>
+          <h1 className="mt-3 max-w-2xl font-display text-4xl font-light leading-[1.05] text-balance sm:text-5xl">
+            Based on what you shared, here's what we found.
+          </h1>
+
+          <div className="mt-5 flex flex-wrap gap-2">
+            {[
+              profile.state,
+              `Household of ${profile.household_size}`,
+              `${profile.children_under_18} children`,
+              `~$${profile.monthly_gross_income.toLocaleString()}/mo`
+            ].map((chip) => (
+              <span
+                key={chip}
+                className="rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm font-medium text-white backdrop-blur"
+              >
+                {chip}
+              </span>
+            ))}
           </div>
-          <div className="hidden h-16 border-l border-white/20 md:block" />
-          <div className="flex items-center gap-4">
-            <span className="font-display text-5xl font-black">~$512</span>
-            <span className="max-w-40 text-lg font-bold text-cyan-50">estimated monthly value</span>
+
+          <div className="mt-9 flex flex-col gap-7 border-t border-white/15 pt-7 md:flex-row md:items-end md:justify-between">
+            <div className="flex flex-wrap items-end gap-x-12 gap-y-6">
+              <div className="flex items-baseline gap-3">
+                <span className="font-display text-6xl font-semibold leading-none text-white">
+                  <CountUp to={likelyCount} />
+                </span>
+                <span className="max-w-[8rem] text-sm leading-5 text-emerald-50/80">
+                  programs you likely qualify for
+                </span>
+              </div>
+              <div className="hidden h-12 w-px bg-white/20 md:block" />
+              <div className="flex items-baseline gap-3">
+                <span className="font-display text-6xl font-semibold leading-none text-gold-300">
+                  <CountUp to={monthlyValue} prefix="$" />
+                </span>
+                <span className="max-w-[9rem] text-sm leading-5 text-emerald-50/80">
+                  estimated monthly value
+                </span>
+              </div>
+            </div>
+            <Button variant="gold" size="lg" onClick={() => navigate("/benefits-cliff")}>
+              <TrendingDown />
+              {t(language, "benefitsCliff")}
+            </Button>
           </div>
         </div>
-        <Button variant="aqua" onClick={() => navigate("/benefits-cliff")}>
-          {t(language, "benefitsCliff")} {'->'}
-        </Button>
+      </Reveal>
+
+      {/* ── Body: results on the left, sticky action plan + controls on the right ── */}
+      <div className="mt-8 grid gap-6 lg:grid-cols-[1.6fr_1fr] lg:items-start lg:gap-8 xl:grid-cols-[1.75fr_1fr]">
+        <div className="space-y-10">
+          {groups.map((group) => {
+            const groupResults = results.filter((r) => group.statuses.includes(r.status));
+            if (!groupResults.length) return null;
+            return (
+              <section key={group.title}>
+                <h2 className="mb-4 flex items-center gap-3 font-display text-2xl font-semibold text-ink">
+                  <span className={`h-2.5 w-2.5 rounded-full ${group.dot}`} />
+                  {group.title}
+                  <span className="text-sm font-medium text-haze">
+                    {groupResults.length} programs
+                  </span>
+                </h2>
+                <div className="space-y-4">
+                  {groupResults.map((result) => (
+                    <ResultCard
+                      key={result.program_id}
+                      result={result}
+                      onExplain={setDrawerResult}
+                      onDetails={openDetails}
+                    />
+                  ))}
+                </div>
+              </section>
+            );
+          })}
+        </div>
+
+        <aside className="space-y-4 lg:sticky lg:top-24">
+          <article className="rounded-3xl border border-border bg-paper p-6 shadow-soft">
+            <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-ink">
+              <ListChecks className="h-5 w-5 text-emerald-600" />
+              Your plain-language plan
+            </h2>
+            <Markdown content={actionPlan.action_plan_text} className="mt-4 text-[0.95rem]" />
+            <p className="mt-5 border-t border-border pt-4 text-xs leading-6 text-haze">
+              {actionPlan.disclaimer}
+            </p>
+          </article>
+
+          <div className="rounded-3xl border border-border bg-paper p-5 shadow-soft">
+            <div className="flex flex-wrap gap-2">
+              <Button variant="outline" size="sm" onClick={() => window.print()}>
+                <Printer />
+                {t(language, "print")}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  reset();
+                  navigate("/");
+                }}
+              >
+                <RotateCcw />
+                {t(language, "startOver")}
+              </Button>
+              <Button size="sm" className="ml-auto" onClick={() => navigate("/check-eligibility")}>
+                Ask the assistant
+                <ArrowRight />
+              </Button>
+            </div>
+            <p className="mt-4 text-xs leading-6 text-haze">
+              Every result is produced by a deterministic rules engine using published 2026 federal
+              and state thresholds. The AI only puts results into plain language.
+            </p>
+          </div>
+        </aside>
       </div>
 
-      <div className="mt-6 rounded-2xl border border-violet-200 bg-violet-50 p-5 text-lg text-violet-900">
-        These are estimates to help you decide where to apply. Final eligibility is decided by each agency.
-      </div>
-
-      <article className="mt-10 rounded-2xl border border-border bg-surface p-6">
-        <h2 className="mb-3 font-display text-3xl font-black text-dark">Plain-language action plan</h2>
-        <Markdown content={actionPlan.action_plan_text} className="text-lg leading-8 text-slate-700" />
-        <p className="mt-5 text-sm text-muted">{actionPlan.disclaimer}</p>
-      </article>
-
-      <div className="mt-12 space-y-12">
-        {groups.map((group) => {
-          const groupResults = results.filter((result) => group.statuses.includes(result.status));
-          if (!groupResults.length) return null;
-          return (
-            <section key={group.title}>
-              <h2 className="mb-5 flex items-center gap-3 font-display text-3xl font-black uppercase text-dark">
-                <span className={`h-3 w-3 rounded-full ${group.dot}`} />
-                {group.title}
-                <span className="font-body text-base font-bold normal-case text-slate-400">{groupResults.length} programs</span>
-              </h2>
-              <div className="space-y-5">
-                {groupResults.map((result) => (
-                  <ResultCard key={result.program_id} result={result} onExplain={setDrawerResult} onDetails={openDetails} />
-                ))}
-              </div>
-            </section>
-          );
-        })}
-      </div>
-
-      <div className="mt-10 flex flex-wrap gap-3 border-t border-border pt-8">
-        <Button variant="secondary" onClick={() => window.print()}>{t(language, "print")}</Button>
-        <Button
-          variant="ghost"
-          onClick={() => {
-            reset();
-            navigate("/");
-          }}
-        >
-          {t(language, "startOver")}
-        </Button>
-      </div>
-      <p className="mt-8 text-muted">
-        Every result is produced by a deterministic rules engine using published 2026 federal and state thresholds. The AI only puts results into plain language.
-      </p>
-      <ExplainabilityDrawer result={drawerResult} profile={profile} onClose={() => setDrawerResult(null)} />
-    </section>
+      <ExplainabilityDrawer
+        result={drawerResult}
+        profile={profile}
+        onClose={() => setDrawerResult(null)}
+      />
+      </section>
+    </div>
   );
 }

@@ -1,5 +1,14 @@
-import type { EligibilityResult, UserProfile } from "../types/api";
-import { Button } from "./Button";
+import { Check, X } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle
+} from "@/components/ui/sheet";
+import { StatusBadge } from "./StatusBadge";
+import { ProgramGlyph } from "@/lib/programs";
+import type { EligibilityResult, UserProfile } from "@/types/api";
 
 export function ExplainabilityDrawer({
   result,
@@ -10,53 +19,81 @@ export function ExplainabilityDrawer({
   profile: UserProfile;
   onClose: () => void;
 }) {
-  if (!result) return null;
-
   return (
-    <div className="fixed inset-0 z-50 bg-dark/40" role="dialog" aria-modal="true">
-      <div className="ml-auto flex h-full max-w-xl flex-col overflow-y-auto bg-surface p-6 shadow-soft">
-        <div className="mb-6 flex items-start justify-between gap-6">
-          <div>
-            <p className="text-sm font-extrabold uppercase tracking-[0.22em] text-teal">Why this result?</p>
-            <h2 className="display-heading mt-3 text-4xl text-dark">{result.program_name}</h2>
-          </div>
-          <button className="rounded-full border border-border px-3 py-1 text-xl" onClick={onClose} type="button">
-            x
-          </button>
-        </div>
-        <p className="text-lg leading-8 text-slate-700">{result.reason}</p>
-        <section className="mt-8">
-          <h3 className="mb-3 text-xl font-extrabold">Inputs used</h3>
-          <dl className="grid grid-cols-2 gap-3 text-sm">
-            <dt className="text-muted">State</dt>
-            <dd className="font-bold">{profile.state}</dd>
-            <dt className="text-muted">Household</dt>
-            <dd className="font-bold">{profile.household_size} people</dd>
-            <dt className="text-muted">Children</dt>
-            <dd className="font-bold">{profile.children_under_18}</dd>
-            <dt className="text-muted">Monthly income</dt>
-            <dd className="font-bold">${profile.monthly_gross_income.toLocaleString()}</dd>
-          </dl>
-        </section>
-        <section className="mt-8">
-          <h3 className="mb-3 text-xl font-extrabold">Rules checked</h3>
-          <div className="space-y-3">
-            {result.eligibility_factors.map((factor) => (
-              <div key={factor.factor_name} className="rounded-xl bg-page p-4">
-                <p className="font-bold">{factor.factor_name}</p>
-                <p className="text-sm text-muted">{factor.user_value} compared with {factor.threshold}</p>
+    <Sheet open={!!result} onOpenChange={(open) => !open && onClose()}>
+      <SheetContent className="w-full overflow-y-auto border-l border-border bg-canvas sm:max-w-lg">
+        {result && (
+          <>
+            <SheetHeader className="space-y-0 text-left">
+              <div className="flex items-center gap-3">
+                <ProgramGlyph id={result.program_id} className="h-12 w-12" iconClassName="h-6 w-6" />
+                <div>
+                  <SheetTitle className="font-display text-2xl font-semibold text-ink">
+                    {result.program_name}
+                  </SheetTitle>
+                  <SheetDescription className="sr-only">
+                    Why this eligibility result was produced
+                  </SheetDescription>
+                  <div className="mt-1">
+                    <StatusBadge status={result.status} withIcon />
+                  </div>
+                </div>
               </div>
-            ))}
-          </div>
-        </section>
-        <section className="mt-8 rounded-xl bg-softAqua p-5">
-          <h3 className="font-extrabold">Sources</h3>
-          <p className="mt-2 text-sm text-slate-700">
-            {result.data_source}. Data as of {result.data_as_of}. Final eligibility is determined by the agency you apply to.
-          </p>
-        </section>
-        <Button className="mt-8" onClick={onClose}>Close</Button>
-      </div>
-    </div>
+            </SheetHeader>
+
+            <p className="mt-6 leading-7 text-haze">{result.reason}</p>
+
+            <div className="mt-7">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-emerald-700">
+                Rules we checked
+              </p>
+              <div className="space-y-2.5">
+                {result.eligibility_factors.map((factor) => (
+                  <div
+                    key={factor.factor_name}
+                    className="rounded-2xl border border-border bg-paper p-4 shadow-soft"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <h4 className="font-semibold text-ink">{factor.factor_name}</h4>
+                      <span
+                        className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold ${
+                          factor.passes
+                            ? "bg-emerald-50 text-emerald-700"
+                            : "bg-muted text-haze"
+                        }`}
+                      >
+                        {factor.passes ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+                        {factor.passes ? "Passes" : "Review"}
+                      </span>
+                    </div>
+                    <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm">
+                      <dt className="text-haze">You</dt>
+                      <dd className="text-ink">{factor.user_value}</dd>
+                      <dt className="text-haze">Rule</dt>
+                      <dd className="text-ink">{factor.threshold}</dd>
+                    </dl>
+                    {factor.note && <p className="mt-2 text-xs text-haze">{factor.note}</p>}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-7 rounded-2xl border border-emerald-200/70 bg-mint/50 p-5 text-sm leading-6 text-haze">
+              <p>
+                <span className="font-semibold text-emerald-800">Source:</span> {result.data_source}
+              </p>
+              <p className="mt-1">
+                <span className="font-semibold text-emerald-800">Data as of:</span>{" "}
+                {result.data_as_of}
+              </p>
+              <p className="mt-3 text-haze/80">
+                Checked deterministically for a household of {profile.household_size} in{" "}
+                {profile.state}. Final eligibility is determined by the agency you apply to.
+              </p>
+            </div>
+          </>
+        )}
+      </SheetContent>
+    </Sheet>
   );
 }

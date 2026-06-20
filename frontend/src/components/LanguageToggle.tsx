@@ -1,18 +1,37 @@
-import type { Language } from "../types/api";
+import type { Language } from "@/types/api";
 
-export function LanguageToggle({ language, onChange }: { language: Language; onChange: (language: Language) => void }) {
+export function LanguageToggle({
+  language,
+  onChange,
+  tone = "dark"
+}: {
+  language: Language;
+  onChange: (language: Language) => void;
+  tone?: "dark" | "light";
+}) {
+  const light = tone === "light";
   return (
-    <div className="inline-flex rounded-full border border-border bg-surface p-1 text-sm font-extrabold" aria-label="Language">
-      {(["en", "es"] as const).map((item) => (
+    <div
+      className={`inline-flex items-center rounded-full border p-0.5 text-sm font-semibold ${
+        light ? "border-white/25 bg-white/10 backdrop-blur" : "border-border bg-paper"
+      }`}
+    >
+      {(["en", "es"] as const).map((lang) => (
         <button
-          key={item}
-          className={`rounded-full px-4 py-2 transition ${
-            language === item ? "bg-dark text-white" : "text-muted hover:bg-softAqua"
-          }`}
-          onClick={() => onChange(item)}
+          key={lang}
           type="button"
+          onClick={() => onChange(lang)}
+          className={`rounded-full px-3 py-1 uppercase tracking-wide transition ${
+            language === lang
+              ? light
+                ? "bg-white text-emerald-800"
+                : "bg-ink text-white"
+              : light
+                ? "text-white/70 hover:text-white"
+                : "text-haze hover:text-ink"
+          }`}
         >
-          {item.toUpperCase()}
+          {lang}
         </button>
       ))}
     </div>

@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { BenefitCliffChart } from "../components/BenefitCliffChart";
-import { Button } from "../components/Button";
-import { Card } from "../components/Card";
-import { calculateCliff } from "../lib/api";
-import { makeSampleCliff } from "../lib/sampleData";
-import { useAppState } from "../state/AppState";
-import type { CliffResponse } from "../types/api";
+import { ArrowLeft, Info, TrendingDown } from "lucide-react";
+import { BenefitCliffChart } from "@/components/BenefitCliffChart";
+import { Button } from "@/components/Button";
+import { Reveal } from "@/components/Motion";
+import { calculateCliff } from "@/lib/api";
+import { makeSampleCliff } from "@/lib/sampleData";
+import { useAppState } from "@/state/AppState";
+import type { CliffResponse } from "@/types/api";
 
 export function BenefitsCliffPage({ navigate }: { navigate: (path: string) => void }) {
   const { profile } = useAppState();
@@ -17,43 +18,87 @@ export function BenefitsCliffPage({ navigate }: { navigate: (path: string) => vo
   }, [profile, maxIncome]);
 
   return (
-    <section className="mx-auto max-w-6xl px-5 py-14">
-      <h1 className="display-heading max-w-4xl text-6xl text-dark">What happens to your benefits if your income changes?</h1>
-      <p className="mt-6 max-w-4xl text-xl leading-8 text-muted">
-        Sometimes a raise can briefly leave a household with less overall, because some benefits phase out. This is called a benefits cliff.
-      </p>
-      <div className="my-8 flex flex-wrap items-center gap-4">
-        <label className="font-bold text-muted" htmlFor="maxIncome">Max income</label>
+    <section className="mx-auto max-w-5xl px-6 py-14">
+      <button
+        className="inline-flex items-center gap-1.5 text-sm font-semibold text-haze transition hover:text-emerald-700"
+        onClick={() => navigate("/results")}
+        type="button"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back to results
+      </button>
+
+      <Reveal className="mt-6">
+        <div className="inline-flex items-center gap-2 rounded-full border border-gold-300/60 bg-gold-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-gold-600">
+          <TrendingDown className="h-3.5 w-3.5" />
+          Benefits cliff
+        </div>
+        <h1 className="mt-5 max-w-3xl font-display text-5xl font-light leading-tight text-ink text-balance">
+          What happens to your benefits if your income changes?
+        </h1>
+        <p className="mt-5 max-w-2xl text-lg leading-8 text-haze">
+          Sometimes a raise can briefly leave a household with less overall, because some benefits
+          phase out faster than income rises. That dip is called a benefits cliff.
+        </p>
+      </Reveal>
+
+      <div className="my-8 flex flex-wrap items-center gap-4 rounded-2xl border border-border bg-paper p-4 shadow-soft">
+        <label className="text-sm font-semibold text-ink" htmlFor="maxIncome">
+          Show income up to
+        </label>
         <input
           id="maxIncome"
           type="range"
-          min="3000"
-          max="10000"
-          step="500"
+          min={3000}
+          max={10000}
+          step={500}
           value={maxIncome}
-          onChange={(event) => setMaxIncome(Number(event.target.value))}
-          className="accent-teal"
+          onChange={(e) => setMaxIncome(Number(e.target.value))}
+          className="h-2 flex-1 cursor-pointer appearance-none rounded-full bg-mint accent-emerald-500"
         />
-        <span className="font-extrabold">${maxIncome.toLocaleString()}/mo</span>
+        <span className="rounded-full bg-mint px-3 py-1 text-sm font-bold text-emerald-700">
+          ${maxIncome.toLocaleString()}/mo
+        </span>
       </div>
+
       <BenefitCliffChart cliff={cliff} />
-      <div className="mt-8 grid gap-5 md:grid-cols-2">
+
+      <div className="mt-8 grid gap-4 md:grid-cols-2">
         {cliff.cliff_zones.map((zone) => (
-          <Card key={`${zone.income_start}-${zone.income_end}`} className="border-amber-200 bg-amber-50 p-6">
-            <h2 className="font-display text-3xl font-black text-warning">Cliff zone</h2>
-            <p className="mt-3 text-lg text-slate-700">{zone.description}</p>
-            <p className="mt-4 font-bold">Income range: ${zone.income_start.toLocaleString()} - ${zone.income_end.toLocaleString()}</p>
-            <p className="font-bold">Benefit affected: {zone.benefit_lost}</p>
-          </Card>
+          <div
+            key={`${zone.income_start}-${zone.income_end}`}
+            className="rounded-3xl border border-gold-300/60 bg-gold-50 p-6"
+          >
+            <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-gold-600">
+              <TrendingDown className="h-5 w-5" />
+              Cliff zone
+            </h2>
+            <p className="mt-3 leading-7 text-ink/75">{zone.description}</p>
+            <div className="mt-4 space-y-1 text-sm font-medium text-ink">
+              <p>
+                Income range: ${zone.income_start.toLocaleString()} – $
+                {zone.income_end.toLocaleString()}
+              </p>
+              <p>Benefit affected: {zone.benefit_lost}</p>
+            </div>
+          </div>
         ))}
-        <Card className="border-green-200 bg-green-50 p-6">
-          <h2 className="font-display text-3xl font-black text-success">How to read this</h2>
-          <p className="mt-3 text-lg text-slate-700">
-            The teal line combines monthly income and estimated benefit value. A dip means benefits phase out faster than income rises.
+        <div className="rounded-3xl border border-emerald-200 bg-mint/50 p-6">
+          <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-emerald-700">
+            <Info className="h-5 w-5" />
+            How to read this
+          </h2>
+          <p className="mt-3 leading-7 text-ink/75">
+            The emerald line combines your monthly income and the estimated value of your benefits.
+            A dip means benefits phase out faster than income rises — so earning a little more can
+            briefly leave you with less.
           </p>
-        </Card>
+        </div>
       </div>
-      <Button className="mt-8" variant="secondary" onClick={() => navigate("/results")}>Back to results</Button>
+
+      <Button className="mt-8" variant="outline" onClick={() => navigate("/results")}>
+        Back to results
+      </Button>
     </section>
   );
 }

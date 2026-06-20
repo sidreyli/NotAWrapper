@@ -38,19 +38,24 @@ export function App() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const content = useMemo(() => {
+  const { content, chrome } = useMemo(() => {
     const programRoute = parseProgramRoute(path);
     if (programRoute?.type === "checklist") {
-      return <ChecklistPage navigate={navigate} programId={programRoute.programId} />;
+      return { content: <ChecklistPage navigate={navigate} programId={programRoute.programId} />, chrome: true };
     }
     if (programRoute?.type === "detail") {
-      return <ProgramDetailPage navigate={navigate} programId={programRoute.programId} />;
+      return { content: <ProgramDetailPage navigate={navigate} programId={programRoute.programId} />, chrome: true };
     }
-    if (path === "/check-eligibility") return <CheckEligibilityPage navigate={navigate} />;
-    if (path === "/results") return <ResultsPage navigate={navigate} />;
-    if (path === "/benefits-cliff") return <BenefitsCliffPage navigate={navigate} />;
-    return <LandingPage navigate={navigate} />;
+    if (path === "/check-eligibility")
+      return { content: <CheckEligibilityPage navigate={navigate} />, chrome: false };
+    if (path === "/results") return { content: <ResultsPage navigate={navigate} />, chrome: true };
+    if (path === "/benefits-cliff") return { content: <BenefitsCliffPage navigate={navigate} />, chrome: true };
+    return { content: <LandingPage navigate={navigate} />, chrome: true };
   }, [path]);
 
-  return <AppShell navigate={navigate}>{content}</AppShell>;
+  return (
+    <AppShell navigate={navigate} chrome={chrome}>
+      {content}
+    </AppShell>
+  );
 }

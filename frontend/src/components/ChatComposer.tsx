@@ -1,51 +1,59 @@
-import { useState, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowUp } from "lucide-react";
 
+// Auto-growing composer with Enter-to-send (Shift+Enter for newline). Disabled
+// while the assistant is thinking.
 export function ChatComposer({
   onSend,
-  disabled,
-  placeholder
+  disabled = false,
+  placeholder = "Type your answer…"
 }: {
-  onSend: (message: string) => void;
+  onSend: (text: string) => void;
   disabled?: boolean;
   placeholder?: string;
 }) {
   const [value, setValue] = useState("");
+  const ref = useRef<HTMLTextAreaElement | null>(null);
 
-  const send = () => {
-    const trimmed = value.trim();
-    if (!trimmed || disabled) return;
-    onSend(trimmed);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.style.height = "0px";
+    el.style.height = `${Math.min(el.scrollHeight, 168)}px`;
+  }, [value]);
+
+  const submit = () => {
+    const text = value.trim();
+    if (!text || disabled) return;
+    onSend(text);
     setValue("");
   };
 
-  const onKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault();
-      send();
-    }
-  };
-
   return (
-    <div className="flex items-end gap-2 rounded-2xl border border-border bg-surface p-2 shadow-card transition focus-within:border-teal focus-within:shadow-soft">
+    <div className="flex items-end gap-2 rounded-[1.6rem] border border-border bg-paper p-2 pl-4 shadow-soft transition focus-within:border-emerald-300 focus-within:shadow-glow">
       <textarea
-        className="max-h-40 min-h-11 flex-1 resize-none bg-transparent px-3 py-2.5 text-[15px] leading-7 outline-none placeholder:text-slate-400"
+        ref={ref}
         rows={1}
         value={value}
-        placeholder={placeholder ?? "Type your message..."}
-        onChange={(event) => setValue(event.target.value)}
-        onKeyDown={onKeyDown}
         disabled={disabled}
+        placeholder={placeholder}
+        onChange={(e) => setValue(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            submit();
+          }
+        }}
+        className="max-h-[168px] flex-1 resize-none bg-transparent py-2.5 text-[0.97rem] leading-6 text-ink outline-none placeholder:text-haze/70 disabled:opacity-60"
       />
       <button
         type="button"
-        onClick={send}
+        onClick={submit}
         disabled={disabled || !value.trim()}
         aria-label="Send message"
-        className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-teal to-deep text-white shadow-card transition hover:brightness-110 focus-visible:focus-ring disabled:opacity-40 disabled:hover:brightness-100"
+        className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-emerald-500 text-white shadow-[0_8px_20px_-10px_rgba(12,122,87,0.9)] transition hover:bg-emerald-600 disabled:cursor-not-allowed disabled:bg-muted disabled:text-haze disabled:shadow-none"
       >
-        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 19V5M5 12l7-7 7 7" />
-        </svg>
+        <ArrowUp className="h-5 w-5" strokeWidth={2.4} />
       </button>
     </div>
   );

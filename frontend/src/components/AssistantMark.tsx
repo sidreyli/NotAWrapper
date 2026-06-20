@@ -1,29 +1,44 @@
-// The assistant's identity mark — a sprout inside a gradient disc. It signals
-// "help that helps things grow" and gives the AI one consistent, calm presence
-// across the conversation. Used in the header, every assistant bubble, and the
-// typing indicator.
+import { Compass } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-export function AssistantMark({ size = "md", live = false }: { size?: "sm" | "md"; live?: boolean }) {
-  const dim = size === "sm" ? "h-7 w-7" : "h-9 w-9";
+// The assistant's identity mark — a refined emerald squircle carrying the Aid
+// Compass glyph, echoing the logo tile. When `live`, a soft ring breathes around
+// it to signal the assistant is present / typing.
+export function AssistantMark({
+  size = "md",
+  live = false,
+  className
+}: {
+  size?: "sm" | "md" | "lg";
+  live?: boolean;
+  className?: string;
+}) {
+  const dim = size === "sm" ? "h-9 w-9" : size === "lg" ? "h-12 w-12" : "h-10 w-10";
+  const icon = size === "sm" ? "h-[1.05rem] w-[1.05rem]" : size === "lg" ? "h-6 w-6" : "h-5 w-5";
+  const radius = size === "lg" ? "rounded-[1.1rem]" : "rounded-2xl";
+
   return (
-    <span className={`relative grid ${dim} shrink-0 place-items-center rounded-full bg-gradient-to-br from-aqua to-deep text-white shadow-card`}>
-      <svg
-        viewBox="0 0 24 24"
-        className="h-1/2 w-1/2"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={2.2}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <path d="M12 21v-9" />
-        <path d="M12 12c0-2.5-1.8-4.5-4.8-4.8C7 10 9 12 12 12Z" />
-        <path d="M12 12c0-3 2-5.2 5-5.5C16.8 9.8 14.8 12 12 12Z" />
-      </svg>
+    <span className={cn("relative inline-grid shrink-0 place-items-center", dim, className)}>
       {live && (
-        <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white bg-success" />
+        <span
+          className={cn(
+            "absolute inset-0 animate-ping bg-emerald-400/25 [animation-duration:2.4s]",
+            radius
+          )}
+        />
       )}
+      <span
+        className={cn(
+          "relative grid h-full w-full place-items-center overflow-hidden text-white ring-1 ring-emerald-900/25",
+          "bg-gradient-to-br from-emerald-400 via-emerald-600 to-emerald-900",
+          "shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_8px_20px_-10px_rgba(12,122,87,0.85)]",
+          radius
+        )}
+      >
+        {/* a soft diagonal sheen so the tile reads as glass, not flat fill */}
+        <span className="pointer-events-none absolute -inset-y-3 -left-1.5 w-1/2 -rotate-12 bg-white/15 blur-md" />
+        <Compass className={cn("relative", icon)} strokeWidth={1.9} />
+      </span>
     </span>
   );
 }
