@@ -72,6 +72,22 @@ export interface EligibilityResponse {
   checked_at: string;
 }
 
+export interface IntakeResponse {
+  session_id: string;
+  reply: string;
+  is_complete: boolean;
+  profile?: UserProfile | null;
+}
+
+export interface ChatTurn {
+  role: "user" | "assistant";
+  content: string;
+}
+
+export interface ProgramChatResponse {
+  reply: string;
+}
+
 export interface ActionPlanResponse {
   action_plan_text: string;
   profile: UserProfile;

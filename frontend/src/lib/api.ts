@@ -1,10 +1,13 @@
 import type {
   ActionPlanResponse,
   ApiErrorBody,
+  ChatTurn,
   CliffResponse,
   EligibilityResponse,
   EligibilityResult,
+  IntakeResponse,
   Language,
+  ProgramChatResponse,
   UserProfile
 } from "../types/api";
 import { makeSampleActionPlan, makeSampleCliff, sampleResults } from "./sampleData";
@@ -26,6 +29,36 @@ async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
   }
 
   return response.json();
+}
+
+// --- Intake chat (no sample fallback: a live conversation must surface errors) ---
+
+export async function startIntake(): Promise<IntakeResponse> {
+  return requestJson<IntakeResponse>("/api/intake/start", { method: "POST" });
+}
+
+export async function sendIntakeMessage(
+  sessionId: string | null,
+  message: string
+): Promise<IntakeResponse> {
+  return requestJson<IntakeResponse>("/api/intake/message", {
+    method: "POST",
+    body: JSON.stringify({ session_id: sessionId, message })
+  });
+}
+
+export async function programChat(
+  profile: UserProfile,
+  results: EligibilityResult[],
+  language: Language,
+  history: ChatTurn[],
+  message: string
+): Promise<string> {
+  const response = await requestJson<ProgramChatResponse>("/api/explain/chat", {
+    method: "POST",
+    body: JSON.stringify({ profile, results, language, history, message })
+  });
+  return response.reply;
 }
 
 export async function checkEligibility(profile: UserProfile): Promise<EligibilityResult[]> {
