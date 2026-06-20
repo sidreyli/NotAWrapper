@@ -13,6 +13,7 @@ from backend.schemas import (
     EligibilityResult,
     EligibilityStatus,
 )
+from backend.modules.data_layer.program_registry import program_registry
 from backend.modules.rules_engine.base import ProgramRule
 from backend.modules.rules_engine.programs.snap import SNAPRule
 from backend.modules.rules_engine.programs.medicaid import MedicaidRule
@@ -47,8 +48,52 @@ class EligibilityEngine:
         per-rule exception and returns UNABLE_TO_DETERMINE with the message, never
         raises.
         """
-        raise NotImplementedError("TODO: iterate self.rules with per-rule guards")
+        results: list[EligibilityResult] = []
+        for program_id, rule in self.rules.items():
+            if program_id in profile.current_benefits:
+                results.append(self._already_receiving(program_id))
+                continue
+            try:
+                results.append(rule.check(profile))
+            except Exception as exc:  # noqa: BLE001 — never let one rule break the rest
+                results.append(self._unable_to_determine(program_id, str(exc)))
+        return results
 
     def check_program(self, program_id: str, profile: UserProfile) -> EligibilityResult:
         """Run a single rule by ID."""
-        raise NotImplementedError("TODO: dispatch to self.rules[program_id].check")
+        if program_id in profile.current_benefits:
+            return self._already_receiving(program_id)
+        try:
+            return self.rules[program_id].check(profile)
+        except KeyError:
+            raise
+        except Exception as exc:  # noqa: BLE001
+            return self._unable_to_determine(program_id, str(exc))
+
+    @staticmethod
+    def _program_name(program_id: str) -> str:
+        try:
+            return program_registry.get_program(program_id)["name"]
+        except KeyError:
+            return program_id.upper()
+
+    def _already_receiving(self, program_id: str) -> EligibilityResult:
+        return EligibilityResult(
+            program_id=program_id,
+            program_name=self._program_name(program_id),
+            status=EligibilityStatus.ALREADY_RECEIVING,
+            confidence=1.0,
+            reason="You told us you already receive this benefit.",
+        )
+
+    def _unable_to_determine(self, program_id: str, detail: str) -> EligibilityResult:
+        return EligibilityResult(
+            program_id=program_id,
+            program_name=self._program_name(program_id),
+            status=EligibilityStatus.UNABLE_TO_DETERMINE,
+            confidence=0.0,
+            reason=(
+                "We couldn't automatically determine eligibility for this program. "
+                "Please contact the administering agency or call 211."
+            ),
+        )
