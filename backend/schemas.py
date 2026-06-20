@@ -139,6 +139,18 @@ class ActionPlanResponse(BaseModel):
     )
 
 
+class ProgramChatRequest(BaseModel):
+    profile: UserProfile
+    results: list[EligibilityResult] = Field(default_factory=list)
+    language: str = "en"
+    history: list[IntakeMessage] = Field(default_factory=list)
+    message: str
+
+
+class ProgramChatResponse(BaseModel):
+    reply: str
+
+
 class CliffDataPoint(BaseModel):
     monthly_income: float
     snap_benefit: float
