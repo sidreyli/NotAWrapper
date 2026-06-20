@@ -19,6 +19,7 @@ venv/
 
 # Tooling artifacts
 .playwright-mcp/
+.vercel/
 
 # OS / editor
 .DS_Store

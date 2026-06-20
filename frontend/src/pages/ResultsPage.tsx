@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowRight, Printer, RotateCcw, TrendingDown } from "lucide-react";
+import { ArrowRight, LayoutDashboard, Printer, RotateCcw, TrendingDown } from "lucide-react";
 import { ActionPlanCard } from "@/components/ActionPlanCard";
 import { Button } from "@/components/Button";
 import { CountUp } from "@/components/CountUp";
@@ -147,6 +147,11 @@ export function ResultsPage({ navigate }: { navigate: (path: string) => void }) 
           />
 
           <div className="mt-4 rounded-3xl border border-border bg-paper p-5 shadow-soft">
+            <Button className="mb-3 w-full" onClick={() => navigate("/action-center")}>
+              <LayoutDashboard />
+              Open personalized Action Center
+              <ArrowRight />
+            </Button>
             <div className="flex flex-wrap gap-2">
               <Button variant="outline" size="sm" onClick={() => window.print()}>
                 <Printer />

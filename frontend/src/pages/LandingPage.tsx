@@ -1,7 +1,11 @@
 import {
   ArrowRight,
+  CalendarDays,
+  ClipboardCheck,
+  FileSearch,
   FileText,
   Lock,
+  MapPinned,
   Quote,
   ScrollText,
   ShieldCheck,
@@ -10,10 +14,8 @@ import {
 } from "lucide-react";
 import { ShaderBackground } from "@/components/ShaderBackground";
 import { Button } from "@/components/Button";
-import { CountUp } from "@/components/CountUp";
 import { Reveal } from "@/components/Motion";
 import { ProgramGlyph, PROGRAMS } from "@/lib/programs";
-import { StatusBadge } from "@/components/StatusBadge";
 import {
   Accordion,
   AccordionContent,
@@ -44,12 +46,6 @@ const faqItems = [
     q: "Is it available in Spanish?",
     a: "Yes — use the EN / ES toggle in the header to switch the interface language."
   }
-];
-
-const previewCards = [
-  { id: "snap", name: "SNAP", status: "likely_eligible" as const, value: "~$394/mo" },
-  { id: "medicaid", name: "Medicaid", status: "likely_eligible" as const, value: "Full coverage" },
-  { id: "liheap", name: "LIHEAP", status: "possibly_eligible" as const, value: "Varies" }
 ];
 
 const trustItems = [
@@ -105,17 +101,17 @@ export function LandingPage({ navigate }: { navigate: (path: string) => void }) 
             </p>
 
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <Button size="lg" variant="gold" onClick={() => navigate("/check-eligibility")}>
-                See what you may qualify for
+              <Button size="lg" variant="gold" onClick={() => navigate("/action-center")}>
+                Open your Action Center
                 <ArrowRight className="transition group-hover:translate-x-0.5" />
               </Button>
               <Button
                 size="lg"
                 variant="outline"
                 className="border-white/30 bg-white/5 text-white backdrop-blur hover:bg-white/15"
-                onClick={() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" })}
+                onClick={() => navigate("/check-eligibility")}
               >
-                {t(language, "seeHow")}
+                Check my eligibility
               </Button>
             </div>
 
@@ -133,47 +129,47 @@ export function LandingPage({ navigate }: { navigate: (path: string) => void }) 
             </div>
           </div>
 
-          {/* Signature: floating glass results card over the shader */}
+          {/* Signature: the full product is visible before a user starts. */}
           <div className="relative animate-fade-up [animation-delay:120ms]">
             <div className="absolute -right-6 -top-6 hidden h-28 w-28 rounded-3xl border border-white/20 bg-white/10 backdrop-blur lg:block" />
             <div className="relative rounded-[1.75rem] border border-white/40 bg-white/90 p-5 shadow-lift backdrop-blur-xl">
               <div className="mb-4 flex items-center justify-between">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.14em] text-haze">
-                    Results preview
+                    Your Action Center
                   </p>
-                  <p className="font-display text-xl font-semibold text-ink">3 programs matched</p>
+                  <p className="font-display text-xl font-semibold text-ink">Start wherever you need help</p>
                 </div>
                 <span className="rounded-full bg-mint px-3 py-1 text-xs font-bold text-emerald-700">
-                  Sample
+                  Private
                 </span>
               </div>
 
-              <div className="space-y-2.5">
-                {previewCards.map((card, i) => (
-                  <div
-                    key={card.id}
-                    className="flex items-center gap-3 rounded-2xl border border-border bg-paper p-3 shadow-soft transition hover:-translate-y-0.5 hover:shadow-lift"
-                    style={{ animation: `fade-up 0.6s cubic-bezier(0.16,1,0.3,1) ${0.3 + i * 0.12}s both` }}
+              <div className="grid grid-cols-2 gap-2.5">
+                {[
+                  { icon: ClipboardCheck, label: "Check benefits", tone: "bg-emerald-100 text-emerald-700" },
+                  { icon: FileSearch, label: "Understand a letter", tone: "bg-gold-100 text-gold-600" },
+                  { icon: MapPinned, label: "Find nearby help", tone: "bg-sky/10 text-sky" },
+                  { icon: CalendarDays, label: "Plan next steps", tone: "bg-lilac/10 text-lilac" }
+                ].map(({ icon: Icon, label, tone }, i) => (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => navigate("/action-center")}
+                    className="group rounded-2xl border border-border bg-paper p-4 text-left shadow-soft transition hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-lift"
+                    style={{ animation: `fade-up 0.6s cubic-bezier(0.16,1,0.3,1) ${0.28 + i * 0.1}s both` }}
                   >
-                    <ProgramGlyph id={card.id} className="h-11 w-11" iconClassName="h-5 w-5" />
-                    <div className="min-w-0 flex-1">
-                      <p className="font-semibold text-ink">{card.name}</p>
-                      <p className="truncate text-xs text-haze">{PROGRAMS[card.id]?.blurb}</p>
-                    </div>
-                    <div className="text-right">
-                      <StatusBadge status={card.status} className="mb-1" />
-                      <p className="text-sm font-bold text-emerald-700">{card.value}</p>
-                    </div>
-                  </div>
+                    <span className={`grid h-9 w-9 place-items-center rounded-xl ${tone}`}>
+                      <Icon className="h-4 w-4" />
+                    </span>
+                    <span className="mt-3 block text-sm font-bold leading-5 text-ink">{label}</span>
+                  </button>
                 ))}
               </div>
 
               <div className="mt-4 flex items-center justify-between rounded-2xl bg-emerald-700 px-4 py-3 text-white">
-                <span className="text-sm text-emerald-50">Estimated monthly value</span>
-                <span className="font-display text-2xl font-semibold text-gold-300">
-                  <CountUp to={512} prefix="$" />
-                </span>
+                <span className="text-sm text-emerald-50">Use one tool or connect all four</span>
+                <ArrowRight className="h-4 w-4 text-gold-300" />
               </div>
             </div>
           </div>

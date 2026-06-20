@@ -13,11 +13,19 @@ from backend.config import settings
 
 def setup_middleware(app: FastAPI) -> None:
     """Attach CORS middleware and a global exception handler."""
-    origins = list({settings.frontend_url, "http://localhost:3000"})
+    origins = list(
+        {
+            settings.frontend_url,
+            "http://localhost:3000",
+            "http://localhost:5173",
+            "http://127.0.0.1:5173",
+        }
+    )
 
     app.add_middleware(
         CORSMiddleware,
         allow_origins=origins,
+        allow_origin_regex=settings.frontend_origin_regex or None,
         allow_methods=["GET", "POST", "OPTIONS"],
         allow_headers=["*"],
         allow_credentials=True,

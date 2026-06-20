@@ -123,7 +123,113 @@ export interface CliffResponse {
 }
 
 export interface ApiErrorBody {
-  error: string;
-  code: string;
-  status: number;
+  error?: string;
+  detail?: string;
+  code?: string;
+  status?: number;
+}
+
+export interface ExtractedDocumentField {
+  key: string;
+  label: string;
+  value: string;
+  confidence: number;
+  evidence: string;
+  page?: number | null;
+  sensitive?: boolean;
+}
+
+export interface DetectedDeadline {
+  label: string;
+  date?: string | null;
+  evidence: string;
+  confidence: number;
+  page?: number | null;
+}
+
+export interface DocumentChecklistMatch {
+  program_id: string;
+  requirement: string;
+  status: "matched" | "possible" | "missing";
+  reason: string;
+}
+
+export interface DocumentAnalysis {
+  id: string;
+  file_name: string;
+  document_type: string;
+  summary: string;
+  fields: ExtractedDocumentField[];
+  deadlines: DetectedDeadline[];
+  checklist_matches: DocumentChecklistMatch[];
+  warnings: string[];
+  processed_at: string;
+  accepted_fields?: string[];
+  accepted_deadlines?: number[];
+}
+
+export interface LocalResource {
+  id: string;
+  name: string;
+  category: string;
+  address?: string | null;
+  phone?: string | null;
+  website?: string | null;
+  lat?: number | null;
+  lon?: number | null;
+  open_now?: boolean | null;
+  hours?: string[];
+  directions_url?: string | null;
+  distance_meters?: number | null;
+  travel_duration_minutes?: number | null;
+  program_ids?: string[];
+  source: string;
+}
+
+export interface ResourcesResponse {
+  resources: LocalResource[];
+  source: string;
+  zip_code?: string | null;
+  center_lat?: number | null;
+  center_lon?: number | null;
+  message?: string | null;
+}
+
+export type TimelineDateSource = "official" | "extracted" | "suggested";
+
+export interface ActionTask {
+  id: string;
+  title: string;
+  description: string;
+  kind: "document" | "call" | "visit" | "apply" | "follow_up" | "deadline";
+  due_at: string;
+  date_source: TimelineDateSource;
+  program_id?: string | null;
+  duration_minutes?: number | null;
+  location?: string | null;
+  url?: string | null;
+  completed: boolean;
+}
+
+export interface ActionTimeline {
+  tasks: ActionTask[];
+  generated_at: string;
+}
+
+export interface ActionCenterState {
+  savedAt: number;
+  documentAnalyses: DocumentAnalysis[];
+  savedResources: LocalResource[];
+  timeline: ActionTimeline | null;
+}
+
+export interface CalendarAuthorizeResponse {
+  configured: boolean;
+  authorization_url?: string | null;
+}
+
+export interface CalendarEventsResponse {
+  created: number;
+  skipped: number;
+  errors: string[];
 }

@@ -5,13 +5,14 @@ information; eligibility is never decided here. Model string is always
 `claude-sonnet-4-6` (see CLAUDE.md invariant 8).
 """
 
+import asyncio
 import logging
+import uuid
 
 import anthropic
 from fastapi import HTTPException
 
-from backend.schemas import IntakeResponse
-from backend.modules.intake.session_manager import session_manager
+from backend.schemas import IntakeMessage, IntakeResponse
 from backend.modules.intake.prompt_builder import (
     build_intake_system_prompt,
     build_intake_user_prompt,
@@ -27,28 +28,30 @@ class IntakeConversation:
     def __init__(self, anthropic_client: anthropic.Anthropic) -> None:
         self.client = anthropic_client
 
-    async def send_message(self, session_id: str, user_message: str) -> IntakeResponse:
+    async def send_message(
+        self,
+        session_id: str | None,
+        user_message: str,
+        history: list[IntakeMessage] | None = None,
+    ) -> IntakeResponse:
         """Append the user message, call claude-sonnet-4-6, extract any completed
         profile, update the session, and return an IntakeResponse.
 
         On any Anthropic API error, raise HTTPException(502, "AI service unavailable").
         """
-        # Ensure the session exists (create on first contact).
-        try:
-            session_manager.get_session(session_id)
-        except KeyError:
-            session = session_manager.create_session()
-            session_id = session.session_id
-
-        session_manager.add_message(session_id, "user", user_message)
-        session = session_manager.get_session(session_id)
+        # The complete conversation is supplied by the browser so any Vercel
+        # function instance can handle the next turn without process memory.
+        current_session_id = session_id or str(uuid.uuid4())
+        messages = list(history or [])
+        messages.append(IntakeMessage(role="user", content=user_message))
 
         try:
-            response = self.client.messages.create(
+            response = await asyncio.to_thread(
+                self.client.messages.create,
                 model=MODEL,
                 max_tokens=1024,
                 system=build_intake_system_prompt(),
-                messages=build_intake_user_prompt(session.messages),
+                messages=build_intake_user_prompt(messages),
             )
         except anthropic.AnthropicError as exc:
             logger.error("Anthropic intake call failed: %s", exc)
@@ -56,20 +59,17 @@ class IntakeConversation:
 
         response_text = response.content[0].text
 
-        is_complete, profile = extract_profile(session_id, response_text)
+        is_complete, profile = extract_profile(current_session_id, response_text)
 
         if is_complete and profile is not None:
             # Surface only the conversational text before the marker to the user.
             reply = response_text.split(MARKER)[0].strip() or (
                 "Thank you — I have everything I need. Let me check your eligibility now."
             )
-            session_manager.add_message(session_id, "assistant", reply)
-            session_manager.mark_complete(session_id, profile)
             return IntakeResponse(
-                session_id=session_id, reply=reply, is_complete=True, profile=profile
+                session_id=current_session_id, reply=reply, is_complete=True, profile=profile
             )
 
-        session_manager.add_message(session_id, "assistant", response_text)
         return IntakeResponse(
-            session_id=session_id, reply=response_text, is_complete=False, profile=None
+            session_id=current_session_id, reply=response_text, is_complete=False, profile=None
         )

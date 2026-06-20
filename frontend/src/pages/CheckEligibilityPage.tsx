@@ -122,7 +122,11 @@ export function CheckEligibilityPage({ navigate }: { navigate: (path: string) =>
 
     if (phase === "intake") {
       try {
-        const response = await sendIntakeMessage(sessionId, text);
+        const intakeHistory = messages.map((message) => ({
+          role: message.role,
+          content: message.content
+        }));
+        const response = await sendIntakeMessage(sessionId, text, intakeHistory);
         setSessionId(response.session_id);
         if (response.reply) pushText("assistant", response.reply);
         if (response.is_complete && response.profile) {

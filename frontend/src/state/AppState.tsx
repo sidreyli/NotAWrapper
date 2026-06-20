@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { ActionPlanResponse, EligibilityResult, Language, UserProfile } from "../types/api";
 import { makeSampleActionPlan, sampleProfile, sampleResults } from "../lib/sampleData";
 import { clearSession, loadSession } from "../lib/sessionStore";
+import { clearActionCenter } from "../lib/actionCenterStore";
 
 interface AppState {
   language: Language;
@@ -53,6 +54,7 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
       setSelectedProgramId,
       reset: () => {
         clearSession();
+        clearActionCenter();
         const nextProfile = { ...sampleProfile, language };
         setProfile(nextProfile);
         setResults(sampleResults);

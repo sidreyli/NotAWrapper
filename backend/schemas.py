@@ -1,7 +1,8 @@
 from pydantic import BaseModel, Field
 from enum import Enum
-from typing import Optional
-from datetime import datetime
+from typing import Literal, Optional
+from uuid import uuid4
+from datetime import date, datetime, timezone
 
 
 class EligibilityStatus(str, Enum):
@@ -93,7 +94,7 @@ class EligibilityResult(BaseModel):
 class IntakeMessage(BaseModel):
     role: str  # "user" or "assistant"
     content: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class IntakeSession(BaseModel):
@@ -101,13 +102,14 @@ class IntakeSession(BaseModel):
     messages: list[IntakeMessage] = Field(default_factory=list)
     profile: Optional[UserProfile] = None
     is_complete: bool = False
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class IntakeRequest(BaseModel):
     session_id: Optional[str] = None
-    message: str
+    message: str = Field(..., min_length=1, max_length=4000)
+    history: list[IntakeMessage] = Field(default_factory=list, max_length=40)
 
 
 class IntakeResponse(BaseModel):
@@ -181,10 +183,11 @@ class CliffResponse(BaseModel):
     profile: UserProfile
     data_points: list[CliffDataPoint]
     cliff_zones: list[CliffZone]
-    calculated_at: datetime = Field(default_factory=datetime.utcnow)
+    calculated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class Resource(BaseModel):
+    id: str
     name: str
     category: str
     address: Optional[str] = None
@@ -192,12 +195,102 @@ class Resource(BaseModel):
     website: Optional[str] = None
     lat: Optional[float] = None
     lon: Optional[float] = None
+    open_now: Optional[bool] = None
+    hours: list[str] = Field(default_factory=list)
+    directions_url: Optional[str] = None
+    distance_meters: Optional[int] = None
+    travel_duration_minutes: Optional[int] = None
+    program_ids: list[str] = Field(default_factory=list)
+    source: str = "OpenStreetMap"
 
 
 class ResourcesResponse(BaseModel):
     resources: list[Resource]
     source: str = "OpenStreetMap"
     zip_code: Optional[str] = None
+    center_lat: Optional[float] = None
+    center_lon: Optional[float] = None
+    message: Optional[str] = None
+
+
+class ExtractedDocumentField(BaseModel):
+    key: str
+    label: str
+    value: str
+    confidence: float = Field(..., ge=0.0, le=1.0)
+    evidence: str
+    page: Optional[int] = None
+    sensitive: bool = False
+
+
+class DetectedDeadline(BaseModel):
+    label: str
+    date: Optional[str] = None
+    evidence: str
+    confidence: float = Field(..., ge=0.0, le=1.0)
+    page: Optional[int] = None
+
+
+class DocumentChecklistMatch(BaseModel):
+    program_id: str
+    requirement: str
+    status: Literal["matched", "possible", "missing"]
+    reason: str
+
+
+class DocumentAnalysis(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid4()))
+    file_name: str
+    document_type: str
+    summary: str
+    fields: list[ExtractedDocumentField] = Field(default_factory=list)
+    deadlines: list[DetectedDeadline] = Field(default_factory=list)
+    checklist_matches: list[DocumentChecklistMatch] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
+    processed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+class ActionTask(BaseModel):
+    id: str
+    title: str
+    description: str
+    kind: Literal["document", "call", "visit", "apply", "follow_up", "deadline"]
+    due_at: str
+    date_source: Literal["official", "extracted", "suggested"]
+    program_id: Optional[str] = None
+    duration_minutes: Optional[int] = None
+    location: Optional[str] = None
+    url: Optional[str] = None
+    completed: bool = False
+
+
+class ActionTimeline(BaseModel):
+    tasks: list[ActionTask]
+    generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+class TimelineBuildRequest(BaseModel):
+    program_ids: list[str] = Field(default_factory=list)
+    document_analyses: list[DocumentAnalysis] = Field(default_factory=list)
+    selected_resources: list[Resource] = Field(default_factory=list)
+    target_date: date
+
+
+class CalendarAuthorizeResponse(BaseModel):
+    configured: bool
+    authorization_url: Optional[str] = None
+
+
+class CalendarEventsRequest(BaseModel):
+    authorization_code: str
+    state: str
+    tasks: list[ActionTask]
+
+
+class CalendarEventsResponse(BaseModel):
+    created: int
+    skipped: int = 0
+    errors: list[str] = Field(default_factory=list)
 
 
 class FPLData(BaseModel):

@@ -26,8 +26,10 @@ These rules must never be violated anywhere in the codebase:
    structured profiles (intake), and converts eligibility results to plain language
    (explainer). The rules engine output is injected verbatim into explainer prompts.
 
-3. **No PII is stored.** Sessions are in-memory only. No SSN, exact address, or
-   full name is ever collected. Sessions expire after 2 hours of inactivity.
+3. **Anonymous use is browser-local.** No SSN, exact address, or full name is
+   requested. Users may optionally sign in with Clerk and explicitly save a reviewed,
+   structured case file to Supabase. Raw documents, chat transcripts, and OAuth tokens
+   are never stored in Supabase.
 
 4. **Every program recommendation must include a `data_source` and `data_as_of`
    field.** The LLM explainer must cite these in every action plan.
@@ -47,7 +49,7 @@ These rules must never be violated anywhere in the codebase:
 9. **All API routes return consistent JSON error format on failure:**
    `{"error": "description", "code": "ERROR_CODE", "status": 400}`
 
-10. **CORS is enabled** for `http://localhost:3000` (Next.js dev default) and the
+10. **CORS is enabled** for local Vite origins and the
     deployed frontend URL set in `FRONTEND_URL` env var.
 
 ---

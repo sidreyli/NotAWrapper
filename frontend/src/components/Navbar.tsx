@@ -4,6 +4,7 @@ import { t } from "@/lib/i18n";
 import { Button } from "./Button";
 import { LanguageToggle } from "./LanguageToggle";
 import { Wordmark } from "./Logo";
+import { AuthControls } from "@/auth/AuthControls";
 
 export function Navbar({ navigate }: { navigate: (path: string) => void }) {
   const { language, setLanguage } = useAppState();
@@ -57,14 +58,15 @@ export function Navbar({ navigate }: { navigate: (path: string) => void }) {
       </div>
 
       <div className="flex items-center gap-3">
+        <AuthControls />
         <LanguageToggle language={language} onChange={setLanguage} tone="light" />
         <Button
           size="md"
           variant="gold"
           className="hidden sm:inline-flex"
-          onClick={() => navigate("/check-eligibility")}
+          onClick={() => navigate("/action-center")}
         >
-          {t(language, "checkEligibility")}
+          Action Center
         </Button>
       </div>
     </>

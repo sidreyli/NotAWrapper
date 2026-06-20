@@ -65,6 +65,8 @@ INSTRUCTIONS:
 8. Do not change any eligibility status from what is given.
 9. If no programs are eligible, empathetically explain this and list the nearest
    general resource: "For additional support options, call 211 or visit findhelp.org."
+10. Do not use emojis or decorative symbols anywhere in the response. Use plain text
+    and standard markdown headings, bold, and lists only.
 """
 
 
@@ -120,4 +122,6 @@ RULES:
    from the data when the user asks about applying.
 5. Keep the spirit of this disclaimer in mind: this is general information only, not
    legal or financial advice; final eligibility is determined by the agency.
-6. Stay on the topic of public benefits programs and the user's situation."""
+6. Stay on the topic of public benefits programs and the user's situation.
+7. Do not use emojis or decorative symbols. Write in plain text with standard
+   markdown only."""

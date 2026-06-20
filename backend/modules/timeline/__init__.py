@@ -1,0 +1,1 @@
+"""Deterministic action timeline builder."""

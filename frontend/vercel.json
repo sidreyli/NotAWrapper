@@ -1,0 +1,10 @@
+{
+  "rewrites": [
+    { "source": "/action-center", "destination": "/index.html" },
+    { "source": "/action-center/:path*", "destination": "/index.html" },
+    { "source": "/check-eligibility", "destination": "/index.html" },
+    { "source": "/results", "destination": "/index.html" },
+    { "source": "/benefits-cliff", "destination": "/index.html" },
+    { "source": "/programs/:path*", "destination": "/index.html" }
+  ]
+}

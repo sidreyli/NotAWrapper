@@ -1,5 +1,8 @@
 import type {
   ActionPlanResponse,
+  ActionTimeline,
+  CalendarAuthorizeResponse,
+  CalendarEventsResponse,
   ApiErrorBody,
   ChatTurn,
   CliffResponse,
@@ -7,13 +10,21 @@ import type {
   EligibilityResult,
   IntakeResponse,
   Language,
+  ResourcesResponse,
   ProgramChatResponse,
   UserProfile
 } from "../types/api";
+import type { DocumentAnalysis } from "../types/api";
 import { makeSampleActionPlan, makeSampleCliff, sampleResults } from "./sampleData";
 
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "");
+
+function apiUrl(path: string): string {
+  return `${API_BASE_URL}${path}`;
+}
+
 async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(path, {
+  const response = await fetch(apiUrl(path), {
     headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) },
     ...init
   });
@@ -25,9 +36,68 @@ async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
     } catch {
       body = undefined;
     }
-    throw new Error(body?.error ?? `Request failed: ${response.status}`);
+    throw new Error(body?.error ?? body?.detail ?? `Request failed: ${response.status}`);
   }
 
+  return response.json();
+}
+
+export async function buildTimeline(input: {
+  program_ids: string[];
+  document_analyses: DocumentAnalysis[];
+  selected_resources: import("../types/api").LocalResource[];
+  target_date: string;
+}): Promise<ActionTimeline> {
+  return requestJson<ActionTimeline>("/api/timeline/build", {
+    method: "POST",
+    body: JSON.stringify(input)
+  });
+}
+
+export async function getCalendarStatus(): Promise<CalendarAuthorizeResponse> {
+  return requestJson<CalendarAuthorizeResponse>("/api/calendar/google/status");
+}
+
+export async function getCalendarAuthorization(): Promise<CalendarAuthorizeResponse> {
+  return requestJson<CalendarAuthorizeResponse>("/api/calendar/google/authorize");
+}
+
+export async function createCalendarEvents(
+  authorizationCode: string,
+  state: string,
+  tasks: import("../types/api").ActionTask[]
+): Promise<CalendarEventsResponse> {
+  return requestJson<CalendarEventsResponse>("/api/calendar/google/events", {
+    method: "POST",
+    body: JSON.stringify({ authorization_code: authorizationCode, state, tasks })
+  });
+}
+
+export async function findResources(
+  zipCode: string,
+  program: string,
+  travelMode: string
+): Promise<ResourcesResponse> {
+  const params = new URLSearchParams({ zip_code: zipCode, travel_mode: travelMode });
+  if (program) params.set("program", program);
+  return requestJson<ResourcesResponse>(`/api/resources?${params.toString()}`);
+}
+
+export async function analyzeDocument(file: File, programIds: string[]): Promise<DocumentAnalysis> {
+  const form = new FormData();
+  form.append("file", file);
+  form.append("program_ids", programIds.join(","));
+  const response = await fetch(apiUrl("/api/documents/analyze"), { method: "POST", body: form });
+  if (!response.ok) {
+    let message = `Document analysis failed: ${response.status}`;
+    try {
+      const body = await response.json() as { detail?: string; error?: string };
+      message = body.detail ?? body.error ?? message;
+    } catch {
+      // Use the status-based message.
+    }
+    throw new Error(message);
+  }
   return response.json();
 }
 
@@ -39,11 +109,12 @@ export async function startIntake(): Promise<IntakeResponse> {
 
 export async function sendIntakeMessage(
   sessionId: string | null,
-  message: string
+  message: string,
+  history: ChatTurn[]
 ): Promise<IntakeResponse> {
   return requestJson<IntakeResponse>("/api/intake/message", {
     method: "POST",
-    body: JSON.stringify({ session_id: sessionId, message })
+    body: JSON.stringify({ session_id: sessionId, message, history })
   });
 }
 
