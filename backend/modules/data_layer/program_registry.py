@@ -41,7 +41,25 @@ class ProgramRegistry:
         Prefers the state-specific apply_url over the national one.
         Raises ValueError if state not in state_programs.json.
         """
-        raise NotImplementedError("TODO: merge national + state program info")
+        if state not in self.state_programs:
+            raise ValueError(f"Unsupported state: {state}")
+
+        program = dict(self.programs[program_id])  # national base
+        state_data = self.state_programs[state]
+
+        # Pull any keys for this program prefixed with the program_id
+        # (e.g. "snap_apply_url", "medicaid_adult_fpl_pct") into the merged dict.
+        prefix = f"{program_id}_"
+        for key, value in state_data.items():
+            if key.startswith(prefix):
+                program[key[len(prefix):]] = value
+
+        # Prefer the state-specific apply URL over the national one.
+        state_apply_url = state_data.get(f"{program_id}_apply_url")
+        program["apply_url"] = state_apply_url or program.get("national_apply_url", "")
+        program["state"] = state
+        program["state_name"] = state_data.get("name", state)
+        return program
 
     def get_required_documents(self, program_id: str) -> list[str]:
         return self.programs[program_id]["required_documents"]
