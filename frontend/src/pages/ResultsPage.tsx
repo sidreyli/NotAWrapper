@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "../components/Button";
 import { ExplainabilityDrawer } from "../components/ExplainabilityDrawer";
+import { Markdown } from "../components/Markdown";
 import { ResultCard } from "../components/ResultCard";
 import { useAppState } from "../state/AppState";
 import type { EligibilityResult, EligibilityStatus } from "../types/api";
@@ -56,7 +57,7 @@ export function ResultsPage({ navigate }: { navigate: (path: string) => void }) 
 
       <article className="mt-10 rounded-2xl border border-border bg-surface p-6">
         <h2 className="mb-3 font-display text-3xl font-black text-dark">Plain-language action plan</h2>
-        <p className="text-lg leading-8 text-slate-700">{actionPlan.action_plan_text}</p>
+        <Markdown content={actionPlan.action_plan_text} className="text-lg leading-8 text-slate-700" />
         <p className="mt-5 text-sm text-muted">{actionPlan.disclaimer}</p>
       </article>
 
