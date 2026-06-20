@@ -69,7 +69,7 @@ export function LandingPage({ navigate }: { navigate: (path: string) => void }) 
       {/* ───────────────────────── Hero ───────────────────────── */}
       {/* The shader is pulled up under the sticky navbar (negative margin) so the
           translucent nav floats over emerald, not the white body above it. */}
-      <section className="relative isolate -mt-[4.75rem] overflow-hidden">
+      <section className="relative isolate -mt-[5.25rem] overflow-hidden">
         <ShaderBackground />
         {/* top darken for nav legibility + bottom fade into the light body */}
         <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-48 bg-gradient-to-b from-[#04130D]/75 to-transparent" />
@@ -77,15 +77,7 @@ export function LandingPage({ navigate }: { navigate: (path: string) => void }) 
 
         <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-6 pb-28 pt-[10.5rem] lg:grid-cols-[1.05fr_0.95fr] lg:pb-36 lg:pt-[12rem]">
           <div className="animate-fade-up">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-white backdrop-blur">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold-300 opacity-70" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-gold-300" />
-              </span>
-              Public benefits navigator
-            </div>
-
-            <h1 className="mt-7 font-display text-[3.4rem] font-light leading-[0.98] tracking-[-0.02em] text-white text-balance sm:text-7xl">
+            <h1 className="font-display text-[3.4rem] font-light leading-[0.98] tracking-[-0.02em] text-white text-balance sm:text-7xl">
               Find the support{" "}
               <span className="relative whitespace-nowrap italic">
                 you've earned

@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Layers, ListChecks, Loader2, Lock, ShieldCheck, Sparkles, Timer } from "lucide-react";
+import { ArrowRight, Layers, Loader2, Lock, ShieldCheck, Sparkles, Timer } from "lucide-react";
+import { ActionPlanCard } from "@/components/ActionPlanCard";
 import { AssistantMark } from "@/components/AssistantMark";
 import { Button } from "@/components/Button";
 import { ChatBubble, TypingBubble } from "@/components/ChatBubble";
 import { ChatComposer } from "@/components/ChatComposer";
-import { Markdown } from "@/components/Markdown";
 import { CHILL, ShaderBackground } from "@/components/ShaderBackground";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Card } from "@/components/ui/card";
@@ -161,14 +161,9 @@ export function CheckEligibilityPage({ navigate }: { navigate: (path: string) =>
       : "Eligibility check";
 
   return (
-    <div className="relative isolate overflow-hidden">
-      {/* A calm emerald shader breathing behind the page — mostly veiled by the
-          canvas so it reads as quiet atmosphere, not a background. */}
-      <ShaderBackground colors={CHILL} speed={0.16} distortion={0.6} swirl={0.4} />
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-canvas/78 via-canvas/95 to-canvas" />
-
-      <div className="mx-auto flex h-[calc(100dvh-4.75rem)] w-full max-w-[94rem] flex-col px-3 pb-4 pt-2 sm:px-6">
-      <div className="grid min-h-0 flex-1 gap-4 lg:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)]">
+    <div className="relative isolate bg-canvas">
+      <div className="mx-auto flex h-[calc(100dvh-4.25rem)] w-full max-w-[114rem] flex-col px-3 pb-4 pt-3 sm:px-8">
+      <div className="grid min-h-0 flex-1 gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         {/* ── Conversation column ── */}
         <section
           className={`flex min-h-0 flex-col ${
@@ -179,7 +174,7 @@ export function CheckEligibilityPage({ navigate }: { navigate: (path: string) =>
             <div className="flex items-center gap-3">
               <AssistantMark live={loading} />
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-600">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-700">
                   {eyebrow}
                 </p>
                 <h1 className="font-display text-xl font-semibold leading-none text-ink">
@@ -222,8 +217,8 @@ export function CheckEligibilityPage({ navigate }: { navigate: (path: string) =>
             </div>
           </header>
 
-          <div className="relative flex-1 overflow-y-auto rounded-[1.75rem] border border-border bg-gradient-to-b from-paper to-canvas p-4 shadow-soft sm:p-6">
-            <div className="mx-auto max-w-2xl space-y-4">
+          <div className="relative flex-1 overflow-y-auto rounded-[1.75rem] border border-emerald-100 bg-gradient-to-b from-white to-mint/30 p-4 shadow-soft sm:p-6">
+            <div className="mx-auto max-w-3xl space-y-5">
               {messages.map((message) => (
                 <ChatBubble key={message.id} role={message.role} content={message.content} />
               ))}
@@ -232,7 +227,7 @@ export function CheckEligibilityPage({ navigate }: { navigate: (path: string) =>
               <div ref={bottomRef} />
             </div>
           </div>
-          <div className="mx-auto mt-3 w-full max-w-2xl">
+          <div className="mx-auto mt-3 w-full max-w-3xl">
             <ChatComposer
               onSend={handleSend}
               disabled={loading || phase === "checking"}
@@ -254,7 +249,7 @@ export function CheckEligibilityPage({ navigate }: { navigate: (path: string) =>
           }`}
         >
           {isLearn ? (
-            <div className="h-full overflow-y-auto rounded-[1.75rem] border border-emerald-200/70 bg-gradient-to-b from-mint/50 to-paper p-5 shadow-soft sm:p-6">
+            <div className="h-full overflow-y-auto rounded-[1.75rem] border border-emerald-100 bg-gradient-to-b from-mint to-paper p-5 shadow-soft sm:p-6">
               <ResultsLedger results={results} actionPlan={actionPlan} navigate={navigate} />
             </div>
           ) : (
@@ -378,15 +373,7 @@ function ResultsLedger({
         </div>
       </div>
 
-      <Card className="rounded-2xl p-4 shadow-soft">
-        <details open className="group [&_summary::-webkit-details-marker]:hidden">
-          <summary className="flex cursor-pointer select-none items-center gap-2 font-display text-base font-semibold text-ink">
-            <ListChecks className="h-4 w-4 text-emerald-600" />
-            Your action plan
-          </summary>
-          <Markdown content={actionPlan.action_plan_text} className="mt-3 text-sm" />
-        </details>
-      </Card>
+      <ActionPlanCard actionPlan={actionPlan} />
 
       <div className="space-y-2.5">
         {shown.map((result) => (

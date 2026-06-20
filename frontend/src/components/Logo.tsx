@@ -1,3 +1,21 @@
+// Text-only wordmark for the navbar — no glyph tile, just the name set in the
+// display face with a single gold accent dot. Always light, for the emerald bar.
+export function Wordmark({ onClick }: { onClick?: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="group flex items-center gap-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-300 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-900"
+      aria-label="Aid Compass home"
+    >
+      <span className="font-display text-[1.45rem] font-semibold leading-none tracking-[-0.02em] text-white">
+        Aid Compass
+      </span>
+      <span className="h-1.5 w-1.5 translate-y-[3px] rounded-full bg-gold-300 transition group-hover:scale-125" />
+    </button>
+  );
+}
+
 // "Aid Compass" wordmark — a sun cresting an arc, in emerald with a gold sun.
 // `tone="light"` flips the wordmark to white for use over the dark emerald hero.
 export function Logo({ onClick, tone = "dark" }: { onClick?: () => void; tone?: "dark" | "light" }) {

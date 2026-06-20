@@ -53,7 +53,7 @@ export default {
         clay: "#D9744E",
         mint: "#E1F3E9",
         sand: "#F6EEDD",
-        haze: "#5B6E64"
+        haze: "#455A4F"
       },
       fontFamily: {
         display: ['"Fraunces"', "ui-serif", "Georgia", "serif"],

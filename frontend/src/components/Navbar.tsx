@@ -3,7 +3,7 @@ import { useAppState } from "@/state/AppState";
 import { t } from "@/lib/i18n";
 import { Button } from "./Button";
 import { LanguageToggle } from "./LanguageToggle";
-import { Logo } from "./Logo";
+import { Wordmark } from "./Logo";
 
 export function Navbar({ navigate }: { navigate: (path: string) => void }) {
   const { language, setLanguage } = useAppState();
@@ -25,65 +25,70 @@ export function Navbar({ navigate }: { navigate: (path: string) => void }) {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // Three chrome treatments, one pill:
-  //  • over the landing hero  → transparent bar, light text (floats on the shader)
-  //  • inner / working pages  → deep-emerald frosted bar, light text
-  //  • scrolled landing page  → frosted white bar, dark text
+  // Light text throughout so the bar always belongs to the emerald world.
+  //  • landing hero (top)   → floating pill, transparent over the shader
+  //  • landing scrolled     → floating pill, deep-emerald frosted glass
+  //  • every inner page     → full-bleed solid emerald bar (no white showing
+  //                           around a pill, so the chrome reads as one piece)
   const onLanding = typeof window !== "undefined" && window.location.pathname === "/";
   const overHero = onLanding && !scrolled;
-  const light = overHero || !onLanding;
-  const barClass = overHero
-    ? "border-transparent bg-transparent"
-    : onLanding
-      ? "glass border-border shadow-soft"
-      : "glass-emerald border-white/10 shadow-lift";
 
-  return (
-    <header className="sticky top-0 z-50 px-3 pt-3 sm:px-4">
-      <nav
-        className={`mx-auto flex max-w-6xl items-center justify-between gap-4 rounded-full border px-3 py-2 pl-4 transition-all duration-300 ${barClass}`}
-      >
-        <Logo onClick={() => navigate("/")} tone={light ? "light" : "dark"} />
-        <div
-          className={`hidden items-center gap-7 text-sm font-medium lg:flex ${
-            light ? "text-white/75" : "text-haze"
+  const navItems = [
+    { id: "how-it-works", label: t(language, "navHow") },
+    { id: "programs", label: t(language, "navPrograms") },
+    { id: "trust", label: t(language, "navWhy") },
+    { id: "faq", label: t(language, "navFaq") }
+  ];
+
+  const inner = (
+    <>
+      <Wordmark onClick={() => navigate("/")} />
+
+      <div className="hidden items-center gap-1 text-[0.95rem] font-medium text-emerald-50/85 lg:flex">
+        {navItems.map((item) => (
+          <button
+            key={item.id}
+            className="rounded-full px-3.5 py-2 transition hover:bg-white/10 hover:text-white"
+            onClick={() => scrollTo(item.id)}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="flex items-center gap-3">
+        <LanguageToggle language={language} onChange={setLanguage} tone="light" />
+        <Button
+          size="md"
+          variant="gold"
+          className="hidden sm:inline-flex"
+          onClick={() => navigate("/check-eligibility")}
+        >
+          {t(language, "checkEligibility")}
+        </Button>
+      </div>
+    </>
+  );
+
+  if (onLanding) {
+    return (
+      <header className="sticky top-0 z-50 px-3 pt-3 sm:px-5 sm:pt-4">
+        <nav
+          className={`mx-auto flex h-16 max-w-6xl items-center justify-between gap-5 rounded-[1.5rem] border px-4 transition-all duration-300 sm:h-[4.25rem] sm:px-6 ${
+            overHero ? "border-white/10 bg-transparent" : "glass-emerald border-white/12"
           }`}
         >
-          <button
-            className={`transition ${light ? "hover:text-white" : "hover:text-ink"}`}
-            onClick={() => scrollTo("how-it-works")}
-          >
-            {t(language, "navHow")}
-          </button>
-          <button
-            className={`transition ${light ? "hover:text-white" : "hover:text-ink"}`}
-            onClick={() => scrollTo("programs")}
-          >
-            {t(language, "navPrograms")}
-          </button>
-          <button
-            className={`transition ${light ? "hover:text-white" : "hover:text-ink"}`}
-            onClick={() => scrollTo("trust")}
-          >
-            {t(language, "navWhy")}
-          </button>
-          <button
-            className={`transition ${light ? "hover:text-white" : "hover:text-ink"}`}
-            onClick={() => scrollTo("faq")}
-          >
-            {t(language, "navFaq")}
-          </button>
-        </div>
-        <div className="flex items-center gap-2.5">
-          <LanguageToggle language={language} onChange={setLanguage} tone={light ? "light" : "dark"} />
-          <Button
-            size="sm"
-            variant={light ? "gold" : "primary"}
-            className="hidden sm:inline-flex"
-            onClick={() => navigate("/check-eligibility")}
-          >
-            {t(language, "checkEligibility")}
-          </Button>
+          {inner}
+        </nav>
+      </header>
+    );
+  }
+
+  return (
+    <header className="sticky top-0 z-50">
+      <nav className="glass-emerald border-b border-white/10">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-5 px-4 sm:h-[4.25rem] sm:px-6">
+          {inner}
         </div>
       </nav>
     </header>

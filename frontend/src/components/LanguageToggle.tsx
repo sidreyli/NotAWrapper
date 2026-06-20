@@ -12,8 +12,8 @@ export function LanguageToggle({
   const light = tone === "light";
   return (
     <div
-      className={`inline-flex items-center rounded-full border p-0.5 text-sm font-semibold ${
-        light ? "border-white/25 bg-white/10 backdrop-blur" : "border-border bg-paper"
+      className={`inline-flex items-center rounded-full border p-1 text-sm font-semibold ${
+        light ? "border-white/20 bg-white/10 backdrop-blur" : "border-border bg-paper"
       }`}
     >
       {(["en", "es"] as const).map((lang) => (
@@ -21,13 +21,13 @@ export function LanguageToggle({
           key={lang}
           type="button"
           onClick={() => onChange(lang)}
-          className={`rounded-full px-3 py-1 uppercase tracking-wide transition ${
+          className={`rounded-full px-3.5 py-1.5 uppercase tracking-wide transition ${
             language === lang
               ? light
-                ? "bg-white text-emerald-800"
+                ? "bg-white text-emerald-800 shadow-sm"
                 : "bg-ink text-white"
               : light
-                ? "text-white/70 hover:text-white"
+                ? "text-white/75 hover:text-white"
                 : "text-haze hover:text-ink"
           }`}
         >

@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { ArrowRight, ListChecks, Printer, RotateCcw, TrendingDown } from "lucide-react";
+import { ArrowRight, Printer, RotateCcw, TrendingDown } from "lucide-react";
+import { ActionPlanCard } from "@/components/ActionPlanCard";
 import { Button } from "@/components/Button";
 import { CountUp } from "@/components/CountUp";
 import { ExplainabilityDrawer } from "@/components/ExplainabilityDrawer";
-import { Markdown } from "@/components/Markdown";
 import { Reveal } from "@/components/Motion";
 import { ResultCard } from "@/components/ResultCard";
-import { CHILL, ShaderBackground } from "@/components/ShaderBackground";
+import { ShaderBackground } from "@/components/ShaderBackground";
 import { useAppState } from "@/state/AppState";
 import type { EligibilityResult, EligibilityStatus } from "@/types/api";
 import { t } from "@/lib/i18n";
@@ -43,12 +43,7 @@ export function ResultsPage({ navigate }: { navigate: (path: string) => void }) 
   };
 
   return (
-    <div className="relative isolate overflow-hidden">
-      {/* A calm emerald shader breathing behind the page so the canvas never
-          reads as a flat, empty field. Kept faint — atmosphere, not background. */}
-      <ShaderBackground colors={CHILL} speed={0.16} distortion={0.6} swirl={0.4} />
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-canvas/82 via-canvas/96 to-canvas" />
-
+    <div className="relative isolate bg-canvas">
       <section className="mx-auto max-w-[88rem] px-5 py-8 sm:px-8 sm:py-10">
       {/* ── Shader hero: title, household, and the headline numbers in one band ── */}
       <Reveal>
@@ -137,19 +132,21 @@ export function ResultsPage({ navigate }: { navigate: (path: string) => void }) 
           })}
         </div>
 
-        <aside className="space-y-4 lg:sticky lg:top-24">
-          <article className="rounded-3xl border border-border bg-paper p-6 shadow-soft">
-            <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-ink">
-              <ListChecks className="h-5 w-5 text-emerald-600" />
-              Your plain-language plan
-            </h2>
-            <Markdown content={actionPlan.action_plan_text} className="mt-4 text-[0.95rem]" />
-            <p className="mt-5 border-t border-border pt-4 text-xs leading-6 text-haze">
-              {actionPlan.disclaimer}
-            </p>
-          </article>
+        <aside className="lg:sticky lg:top-24">
+          <h2 className="mb-4 flex items-center gap-3 font-display text-2xl font-semibold text-ink">
+            <span className="h-2.5 w-2.5 rounded-full bg-gold-500" />
+            Your action plan
+          </h2>
+          <ActionPlanCard
+            headless
+            actionPlan={actionPlan}
+            meta={[
+              { label: "you likely qualify for", value: `${likelyCount} programs` },
+              { label: "estimated monthly value", value: `$${monthlyValue.toLocaleString()}` }
+            ]}
+          />
 
-          <div className="rounded-3xl border border-border bg-paper p-5 shadow-soft">
+          <div className="mt-4 rounded-3xl border border-border bg-paper p-5 shadow-soft">
             <div className="flex flex-wrap gap-2">
               <Button variant="outline" size="sm" onClick={() => window.print()}>
                 <Printer />
