@@ -11,7 +11,7 @@ from datetime import datetime, timezone
 
 from pydantic import ValidationError
 
-from backend.schemas import UserProfile
+from schemas import UserProfile
 
 logger = logging.getLogger(__name__)
 

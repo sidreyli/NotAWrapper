@@ -5,7 +5,7 @@ from pathlib import Path
 
 from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
 
-from backend.schemas import DocumentAnalysis
+from schemas import DocumentAnalysis
 
 router = APIRouter()
 

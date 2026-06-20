@@ -1,7 +1,7 @@
 from datetime import date
 
-from backend.modules.timeline.builder import TimelineBuilder
-from backend.schemas import DetectedDeadline, DocumentAnalysis
+from modules.timeline.builder import TimelineBuilder
+from schemas import DetectedDeadline, DocumentAnalysis
 
 
 def test_builds_program_plan_with_stable_ids() -> None:

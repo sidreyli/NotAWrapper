@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
 
-from backend.schemas import (
+from schemas import (
     UserProfile,
     EligibilityResult,
     EligibilityStatus,
     EligibilityFactor,
 )
-from backend.modules.data_layer.program_registry import program_registry
+from modules.data_layer.program_registry import program_registry
 
 # Employment statuses that count as earned income for SNAP net-income math.
 EARNED_STATUSES = {"employed_full", "employed_part", "self_employed"}

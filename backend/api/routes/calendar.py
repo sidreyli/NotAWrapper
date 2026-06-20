@@ -11,8 +11,8 @@ import httpx
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import RedirectResponse
 
-from backend.config import settings
-from backend.schemas import CalendarAuthorizeResponse, CalendarEventsRequest, CalendarEventsResponse
+from config import settings
+from schemas import CalendarAuthorizeResponse, CalendarEventsRequest, CalendarEventsResponse
 
 router = APIRouter()
 

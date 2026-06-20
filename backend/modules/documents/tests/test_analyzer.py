@@ -1,5 +1,5 @@
-from backend.modules.documents.analyzer import _strip_code_fence
-from backend.api.routes.documents import _matches_signature
+from modules.documents.analyzer import _strip_code_fence
+from api.routes.documents import _matches_signature
 
 
 def test_strips_json_code_fence() -> None:

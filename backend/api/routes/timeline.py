@@ -2,8 +2,8 @@
 
 from fastapi import APIRouter
 
-from backend.modules.timeline.builder import TimelineBuilder
-from backend.schemas import ActionTimeline, TimelineBuildRequest
+from modules.timeline.builder import TimelineBuilder
+from schemas import ActionTimeline, TimelineBuildRequest
 
 router = APIRouter()
 builder = TimelineBuilder()

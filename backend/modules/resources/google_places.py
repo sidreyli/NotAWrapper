@@ -6,7 +6,7 @@ import re
 
 import httpx
 
-from backend.schemas import Resource
+from schemas import Resource
 
 logger = logging.getLogger(__name__)
 

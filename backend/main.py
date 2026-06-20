@@ -1,14 +1,14 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 import anthropic
-from backend.config import settings
-from backend.api.middleware import setup_middleware
-from backend.api.routes import intake, eligibility, explain, cliff, resources, documents, timeline, calendar
-from backend.modules.intake.conversation import IntakeConversation
-from backend.modules.explainer.action_plan import ActionPlanGenerator
-from backend.modules.rules_engine.engine import EligibilityEngine
-from backend.modules.cliff.calculator import CliffCalculator
-from backend.modules.documents.analyzer import DocumentAnalyzer
+from config import settings
+from api.middleware import setup_middleware
+from api.routes import intake, eligibility, explain, cliff, resources, documents, timeline, calendar
+from modules.intake.conversation import IntakeConversation
+from modules.explainer.action_plan import ActionPlanGenerator
+from modules.rules_engine.engine import EligibilityEngine
+from modules.cliff.calculator import CliffCalculator
+from modules.documents.analyzer import DocumentAnalyzer
 
 
 @asynccontextmanager

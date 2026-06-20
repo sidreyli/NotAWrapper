@@ -2,8 +2,8 @@ from types import SimpleNamespace
 
 import pytest
 
-from backend.modules.intake.conversation import IntakeConversation
-from backend.schemas import IntakeMessage
+from modules.intake.conversation import IntakeConversation
+from schemas import IntakeMessage
 
 
 class FakeMessages:

@@ -4,7 +4,7 @@ The system prompt is returned verbatim — do not paraphrase or edit it. The int
 LLM only collects information; it never determines eligibility.
 """
 
-from backend.schemas import IntakeMessage
+from schemas import IntakeMessage
 
 _INTAKE_SYSTEM_PROMPT = """You are a benefits navigator assistant helping people discover what public support
 programs they may qualify for in the United States. Your job is to have a warm,

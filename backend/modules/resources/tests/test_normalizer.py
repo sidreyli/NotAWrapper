@@ -1,4 +1,4 @@
-from backend.modules.resources.normalizer import normalize_element
+from modules.resources.normalizer import normalize_element
 
 
 def test_normalizes_named_food_bank() -> None:

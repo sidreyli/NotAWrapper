@@ -3,7 +3,7 @@
 These are deterministic inputs; no mocking of the rules engine itself.
 """
 
-from backend.schemas import (
+from schemas import (
     UserProfile,
     IncomeType,
     EmploymentStatus,

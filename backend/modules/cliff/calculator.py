@@ -9,10 +9,10 @@ SKELETON: calculate / get_current_position are not yet implemented. See CLAUDE.m
 Module E and ARCHITECTURE.md "Benefits Cliff Algorithm" for the per-income-level math.
 """
 
-from backend.schemas import UserProfile, CliffResponse, CliffDataPoint
-from backend.modules.data_layer.fpl import fpl_loader
-from backend.modules.data_layer.snap_tables import snap_tables
-from backend.modules.data_layer.program_registry import program_registry
+from schemas import UserProfile, CliffResponse, CliffDataPoint
+from modules.data_layer.fpl import fpl_loader
+from modules.data_layer.snap_tables import snap_tables
+from modules.data_layer.program_registry import program_registry
 
 
 class CliffCalculator:

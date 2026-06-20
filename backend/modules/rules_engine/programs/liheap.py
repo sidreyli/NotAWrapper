@@ -5,10 +5,10 @@ states may set higher thresholds. Confidence is always capped at 0.80 due to
 seasonal funding variability. Pure deterministic logic — no AI, no network calls.
 """
 
-from backend.modules.rules_engine.base import ProgramRule
-from backend.modules.data_layer.program_registry import program_registry
-from backend.modules.data_layer.fpl import fpl_loader
-from backend.schemas import (
+from modules.rules_engine.base import ProgramRule
+from modules.data_layer.program_registry import program_registry
+from modules.data_layer.fpl import fpl_loader
+from schemas import (
     UserProfile,
     EligibilityResult,
     EligibilityStatus,

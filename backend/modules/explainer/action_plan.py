@@ -12,13 +12,13 @@ from datetime import datetime, timezone
 import anthropic
 from fastapi import HTTPException
 
-from backend.schemas import (
+from schemas import (
     UserProfile,
     EligibilityResult,
     ActionPlanResponse,
     IntakeMessage,
 )
-from backend.modules.explainer.prompt_builder import (
+from modules.explainer.prompt_builder import (
     build_explainer_prompt,
     build_program_chat_prompt,
 )

@@ -4,7 +4,7 @@ Mounted at /api/intake (see main.py).
 """
 
 from fastapi import APIRouter, Request
-from backend.schemas import IntakeRequest, IntakeResponse
+from schemas import IntakeRequest, IntakeResponse
 
 router = APIRouter()
 

@@ -5,9 +5,9 @@ is fully populated (data source, apply URL, required documents). The rules engin
 never calls AI and never makes network calls.
 """
 
-from backend.modules.rules_engine.engine import EligibilityEngine
-from backend.schemas import EligibilityStatus
-from backend.modules.rules_engine.tests import fixtures as F
+from modules.rules_engine.engine import EligibilityEngine
+from schemas import EligibilityStatus
+from modules.rules_engine.tests import fixtures as F
 
 engine = EligibilityEngine()
 

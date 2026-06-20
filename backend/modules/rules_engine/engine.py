@@ -8,19 +8,19 @@ Users are always directed to verify with the administering agency.
 No PII is persisted beyond the in-memory session (2-hour TTL).
 """
 
-from backend.schemas import (
+from schemas import (
     UserProfile,
     EligibilityResult,
     EligibilityStatus,
 )
-from backend.modules.data_layer.program_registry import program_registry
-from backend.modules.rules_engine.base import ProgramRule
-from backend.modules.rules_engine.programs.snap import SNAPRule
-from backend.modules.rules_engine.programs.medicaid import MedicaidRule
-from backend.modules.rules_engine.programs.chip import CHIPRule
-from backend.modules.rules_engine.programs.liheap import LIHEAPRule
-from backend.modules.rules_engine.programs.wic import WICRule
-from backend.modules.rules_engine.programs.tanf import TANFRule
+from modules.data_layer.program_registry import program_registry
+from modules.rules_engine.base import ProgramRule
+from modules.rules_engine.programs.snap import SNAPRule
+from modules.rules_engine.programs.medicaid import MedicaidRule
+from modules.rules_engine.programs.chip import CHIPRule
+from modules.rules_engine.programs.liheap import LIHEAPRule
+from modules.rules_engine.programs.wic import WICRule
+from modules.rules_engine.programs.tanf import TANFRule
 
 
 class EligibilityEngine:

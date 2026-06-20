@@ -6,9 +6,9 @@ or LIKELY_INELIGIBLE with a directive to contact the state agency. Federal
 lifetime limit is 60 months. Pure deterministic logic — no AI, no network calls.
 """
 
-from backend.modules.rules_engine.base import ProgramRule
-from backend.modules.data_layer.fpl import fpl_loader
-from backend.schemas import (
+from modules.rules_engine.base import ProgramRule
+from modules.data_layer.fpl import fpl_loader
+from schemas import (
     UserProfile,
     EligibilityResult,
     EligibilityStatus,

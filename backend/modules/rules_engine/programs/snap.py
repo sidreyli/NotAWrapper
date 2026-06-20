@@ -4,10 +4,10 @@ Legal citation: 7 C.F.R. § 273.9 (USDA FNS FY2026 SNAP income limits).
 Pure deterministic logic — no AI, no network calls.
 """
 
-from backend.modules.rules_engine.base import ProgramRule, EARNED_STATUSES
-from backend.modules.data_layer.program_registry import program_registry
-from backend.modules.data_layer.snap_tables import snap_tables
-from backend.schemas import (
+from modules.rules_engine.base import ProgramRule, EARNED_STATUSES
+from modules.data_layer.program_registry import program_registry
+from modules.data_layer.snap_tables import snap_tables
+from schemas import (
     UserProfile,
     EligibilityResult,
     EligibilityStatus,

@@ -1,5 +1,5 @@
-from backend.api.routes.calendar import _make_state, _verify_state
-from backend.config import settings
+from api.routes.calendar import _make_state, _verify_state
+from config import settings
 
 
 def test_calendar_state_is_signed_and_tamper_evident(monkeypatch) -> None:

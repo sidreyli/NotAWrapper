@@ -12,12 +12,12 @@ import uuid
 import anthropic
 from fastapi import HTTPException
 
-from backend.schemas import IntakeMessage, IntakeResponse
-from backend.modules.intake.prompt_builder import (
+from schemas import IntakeMessage, IntakeResponse
+from modules.intake.prompt_builder import (
     build_intake_system_prompt,
     build_intake_user_prompt,
 )
-from backend.modules.intake.profile_extractor import extract_profile, MARKER
+from modules.intake.profile_extractor import extract_profile, MARKER
 
 logger = logging.getLogger(__name__)
 

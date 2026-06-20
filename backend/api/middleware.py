@@ -8,7 +8,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.config import settings
+from config import settings
 
 
 def setup_middleware(app: FastAPI) -> None:

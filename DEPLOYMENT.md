@@ -28,9 +28,9 @@ user to access only the row whose `user_id` equals their token's `sub` claim.
 
 ## 2. Deploy the FastAPI project
 
-Create a Vercel project from the repository with the repository root as its Root
-Directory. Vercel reads `pyproject.toml` and deploys `backend.main:app` as one Python
-function.
+Create a Vercel project from the repository and set its Root Directory to `backend`.
+Vercel reads `backend/pyproject.toml` and deploys `main:app` as one Python function.
+(The backend is self-contained: all imports are top-level, e.g. `from config import settings`.)
 
 Configure these environment variables:
 

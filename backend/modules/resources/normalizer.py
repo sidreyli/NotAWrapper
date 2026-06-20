@@ -4,7 +4,7 @@ SKELETON: not yet implemented. See CLAUDE.md Module F for the amenity→category
 mapping and tag extraction.
 """
 
-from backend.schemas import Resource
+from schemas import Resource
 
 
 def normalize_element(element: dict) -> Resource | None:

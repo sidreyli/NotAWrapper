@@ -7,7 +7,7 @@ SKELETON: handler is stubbed. See CLAUDE.md "Module G → routes/cliff.py".
 
 from fastapi import APIRouter, Request
 
-from backend.schemas import CliffRequest, CliffResponse
+from schemas import CliffRequest, CliffResponse
 
 router = APIRouter()
 

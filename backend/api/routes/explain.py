@@ -5,7 +5,7 @@ Mounted at /api/explain (see main.py).
 
 from fastapi import APIRouter, Request
 
-from backend.schemas import (
+from schemas import (
     ExplainRequest,
     ActionPlanResponse,
     ProgramChatRequest,

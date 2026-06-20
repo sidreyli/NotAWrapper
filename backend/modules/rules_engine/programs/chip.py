@@ -4,10 +4,10 @@ Legal citation: 42 C.F.R. § 457 (CMS, 2026). Only relevant to households with
 children under 18. Pure deterministic logic — no AI, no network calls.
 """
 
-from backend.modules.rules_engine.base import ProgramRule
-from backend.modules.data_layer.program_registry import program_registry
-from backend.modules.data_layer.fpl import fpl_loader
-from backend.schemas import (
+from modules.rules_engine.base import ProgramRule
+from modules.data_layer.program_registry import program_registry
+from modules.data_layer.fpl import fpl_loader
+from schemas import (
     UserProfile,
     EligibilityResult,
     EligibilityStatus,

@@ -9,8 +9,8 @@ import re
 import anthropic
 from fastapi import HTTPException
 
-from backend.modules.data_layer.program_registry import program_registry
-from backend.schemas import DocumentAnalysis
+from modules.data_layer.program_registry import program_registry
+from schemas import DocumentAnalysis
 
 logger = logging.getLogger(__name__)
 MODEL = "claude-sonnet-4-6"

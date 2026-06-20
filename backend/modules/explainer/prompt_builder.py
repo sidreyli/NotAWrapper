@@ -8,8 +8,8 @@ in the user's language.
 
 import json
 
-from backend.schemas import UserProfile, EligibilityResult
-from backend.modules.data_layer.program_registry import program_registry
+from schemas import UserProfile, EligibilityResult
+from modules.data_layer.program_registry import program_registry
 
 
 def build_explainer_prompt(

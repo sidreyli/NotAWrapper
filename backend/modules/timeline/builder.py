@@ -3,8 +3,8 @@
 from datetime import date, timedelta
 from uuid import NAMESPACE_URL, uuid5
 
-from backend.modules.data_layer.program_registry import program_registry
-from backend.schemas import ActionTask, ActionTimeline, DocumentAnalysis, Resource
+from modules.data_layer.program_registry import program_registry
+from schemas import ActionTask, ActionTimeline, DocumentAnalysis, Resource
 
 
 class TimelineBuilder:

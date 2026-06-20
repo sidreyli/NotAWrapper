@@ -8,8 +8,8 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
-from backend.schemas import UserProfile, EligibilityResponse
-from backend.modules.data_layer.program_registry import program_registry
+from schemas import UserProfile, EligibilityResponse
+from modules.data_layer.program_registry import program_registry
 
 router = APIRouter()
 

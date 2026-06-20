@@ -10,11 +10,11 @@ import re
 
 from fastapi import APIRouter, HTTPException, Request
 
-from backend.config import settings
-from backend.schemas import ResourcesResponse
-from backend.modules.resources.google_places import GooglePlacesClient
-from backend.modules.resources.normalizer import normalize_element
-from backend.modules.resources.overpass import OverpassClient
+from config import settings
+from schemas import ResourcesResponse
+from modules.resources.google_places import GooglePlacesClient
+from modules.resources.normalizer import normalize_element
+from modules.resources.overpass import OverpassClient
 
 router = APIRouter()
 
