@@ -1,6 +1,8 @@
-import { ListChecks, Maximize2, ShieldCheck, Sparkles } from "lucide-react";
+import type { ReactNode } from "react";
+import { Check, ListChecks, Maximize2, ShieldCheck } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { Button } from "./Button";
-import { Markdown } from "./Markdown";
 import {
   Dialog,
   DialogClose,
@@ -13,6 +15,14 @@ import type { ActionPlanResponse } from "@/types/api";
 import { cn } from "@/lib/utils";
 
 type Meta = Array<{ label: string; value: string }>;
+
+const STATE_NAMES: Record<string, string> = {
+  CA: "California",
+  TX: "Texas",
+  NY: "New York",
+  FL: "Florida",
+  IL: "Illinois"
+};
 
 // Collapse the long markdown plan into a one-glance teaser for the summary card.
 function planSummary(markdown: string): string {
@@ -32,6 +42,14 @@ function planSummary(markdown: string): string {
     out += s;
   }
   return (out || sentences[0]).trim();
+}
+
+function preparedForLabel(plan: ActionPlanResponse): string | null {
+  const p = plan.profile as Partial<ActionPlanResponse["profile"]> | undefined;
+  if (!p || !p.household_size) return null;
+  const where = p.state ? STATE_NAMES[p.state] ?? p.state : null;
+  const household = `household of ${p.household_size}`;
+  return where ? `${household} · ${where}` : household;
 }
 
 export function ActionPlanCard({
@@ -104,44 +122,123 @@ export function ActionPlanCard({
   );
 }
 
-function PlanModal({ actionPlan, meta }: { actionPlan: ActionPlanResponse; meta: Meta }) {
+function PlanSectionHeading({ children }: { children?: ReactNode }) {
   return (
-    <DialogContent className="flex h-[92vh] max-h-[92vh] w-[min(80rem,96vw)] max-w-none flex-col gap-0 overflow-hidden p-0">
-      {/* Emerald header band keeps the title legible and ties the modal to the brand */}
-      <div className="relative shrink-0 overflow-hidden bg-gradient-to-br from-emerald-700 via-emerald-600 to-emerald-900 px-7 py-7 text-white sm:px-10 sm:py-9">
+    <h2 className="mt-10 flex items-start gap-3 border-t border-emerald-100 pt-7">
+      <span
+        className="mt-1.5 h-6 w-1 shrink-0 rounded-full bg-gradient-to-b from-emerald-400 to-emerald-700"
+        aria-hidden
+      />
+      <span className="font-display text-[1.5rem] font-semibold leading-snug text-emerald-900">
+        {children}
+      </span>
+    </h2>
+  );
+}
+
+// The plan reads like a prepared document: a serif lead, program entries set off
+// by hairline rules, emerald field labels, and documents as a real checklist.
+const planComponents: Parameters<typeof ReactMarkdown>[0]["components"] = {
+  h1: ({ children }) => <PlanSectionHeading>{children}</PlanSectionHeading>,
+  h2: ({ children }) => <PlanSectionHeading>{children}</PlanSectionHeading>,
+  h3: ({ children }) => (
+    <h3 className="mt-7 font-display text-lg font-semibold text-ink">{children}</h3>
+  ),
+  p: ({ children }) => <p className="mt-3 leading-8 text-ink/85">{children}</p>,
+  strong: ({ children }) => <strong className="font-semibold text-emerald-800">{children}</strong>,
+  a: ({ children, href }) => (
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      className="font-semibold text-emerald-700 underline decoration-emerald-300 underline-offset-2 hover:text-emerald-800"
+    >
+      {children}
+    </a>
+  ),
+  ul: ({ children }) => <ul className="mt-4 grid gap-2.5">{children}</ul>,
+  ol: ({ children }) => <ol className="mt-4 grid gap-2.5">{children}</ol>,
+  li: ({ children }) => (
+    <li className="flex gap-3 leading-7 text-ink/85">
+      <span className="mt-1 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-emerald-100 text-emerald-700">
+        <Check className="h-3 w-3" strokeWidth={3} />
+      </span>
+      <span className="min-w-0">{children}</span>
+    </li>
+  ),
+  blockquote: ({ children }) => (
+    <blockquote className="mt-4 border-l-2 border-emerald-300 pl-4 italic text-ink/70">
+      {children}
+    </blockquote>
+  )
+};
+
+function PlanProse({ content }: { content: string }) {
+  return (
+    <div className="plan-prose text-[1.02rem]">
+      <ReactMarkdown remarkPlugins={[remarkGfm]} components={planComponents}>
+        {content}
+      </ReactMarkdown>
+    </div>
+  );
+}
+
+const nextSteps = [
+  "Gather the documents listed for each program.",
+  "Apply through the official links — one at a time is fine.",
+  "The agency reviews your application and makes the final decision."
+];
+
+function PlanModal({ actionPlan, meta }: { actionPlan: ActionPlanResponse; meta: Meta }) {
+  const preparedFor = preparedForLabel(actionPlan);
+
+  return (
+    <DialogContent className="flex h-[92vh] max-h-[92vh] w-[min(82rem,96vw)] max-w-none flex-col gap-0 overflow-hidden p-0">
+      {/* Header reads as the masthead of a prepared document */}
+      <div className="relative shrink-0 overflow-hidden bg-gradient-to-br from-emerald-700 via-emerald-600 to-emerald-900 px-7 py-8 text-white sm:px-12 sm:py-9">
         <div
-          className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-gold-300/20 blur-3xl"
+          className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-gold-300/20 blur-3xl"
           aria-hidden
         />
-        <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-300">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+        <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-gold-300">
           <ListChecks className="h-4 w-4" />
           Your action plan
         </p>
-        <DialogTitle className="mt-3 font-display text-3xl font-light leading-tight tracking-[-0.01em] sm:text-[2.5rem]">
+        <DialogTitle className="mt-3 font-display text-[2rem] font-light leading-[1.05] tracking-[-0.01em] sm:text-[2.6rem]">
           Your plain-language plan
         </DialogTitle>
-        <DialogDescription className="mt-2.5 max-w-xl text-[0.97rem] leading-7 text-emerald-50/90">
+        <DialogDescription className="mt-3 max-w-xl text-[0.97rem] leading-7 text-emerald-50/90">
           Everything we found, in clear words — what fits, why, and exactly what to do next.
         </DialogDescription>
+        {preparedFor && (
+          <p className="mt-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-medium text-emerald-50/90 backdrop-blur">
+            <span className="h-1.5 w-1.5 rounded-full bg-gold-300" />
+            Prepared for a {preparedFor}
+          </p>
+        )}
       </div>
 
       {/* Two-pane body: the plan reads on the left, a quick-facts rail on the right */}
-      <div className="grid min-h-0 flex-1 md:grid-cols-[1fr_23rem]">
-        <div className="min-h-0 overflow-y-auto px-7 py-7 sm:px-12 sm:py-10">
-          <div className="mx-auto max-w-3xl">
-            <Markdown content={actionPlan.action_plan_text} className="text-[1.05rem] leading-8" />
+      <div className="grid min-h-0 flex-1 md:grid-cols-[1fr_22rem]">
+        <div className="min-h-0 overflow-y-auto px-7 py-8 sm:px-14 sm:py-11">
+          <div className="max-w-[44rem]">
+            <PlanProse content={actionPlan.action_plan_text} />
           </div>
         </div>
 
-        <aside className="hidden min-h-0 flex-col gap-5 overflow-y-auto border-l border-border bg-canvas/60 px-7 py-10 md:flex">
+        <aside className="hidden min-h-0 flex-col gap-6 overflow-y-auto border-l border-border bg-gradient-to-b from-mint/40 to-canvas px-7 py-9 md:flex">
           {meta.length > 0 && (
             <div className="space-y-3">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-emerald-700">
+                At a glance
+              </p>
               {meta.map((m) => (
                 <div
                   key={m.label}
                   className="rounded-2xl border border-emerald-100 bg-paper px-5 py-4 shadow-soft"
                 >
-                  <p className="font-display text-2xl font-semibold leading-none text-emerald-700">
+                  <p className="font-display text-3xl font-semibold leading-none text-emerald-700">
                     {m.value}
                   </p>
                   <p className="mt-2 text-[11px] font-medium uppercase tracking-wide text-haze">
@@ -152,21 +249,26 @@ function PlanModal({ actionPlan, meta }: { actionPlan: ActionPlanResponse; meta:
             </div>
           )}
 
-          <div className="rounded-2xl border border-gold-100 bg-gold-50/70 px-5 py-4">
-            <p className="flex items-center gap-2 text-sm font-semibold text-[#7a4e0c]">
-              <Sparkles className="h-4 w-4" />
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-emerald-700">
               What happens next
             </p>
-            <p className="mt-2 text-[0.85rem] leading-6 text-[#7a4e0c]/85">
-              Gather the listed documents, then apply through the official links. Each agency makes
-              the final decision.
-            </p>
+            <ol className="mt-3 space-y-3.5">
+              {nextSteps.map((step, i) => (
+                <li key={i} className="flex gap-3">
+                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-emerald-600 font-display text-xs font-semibold text-white">
+                    {i + 1}
+                  </span>
+                  <span className="text-[0.9rem] leading-6 text-ink/80">{step}</span>
+                </li>
+              ))}
+            </ol>
           </div>
         </aside>
       </div>
 
-      <div className="flex shrink-0 flex-col gap-3 border-t border-border bg-canvas/80 px-7 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-10">
-        <p className="flex items-start gap-2 text-xs leading-6 text-haze sm:max-w-xl">
+      <div className="flex shrink-0 flex-col gap-3 border-t border-border bg-canvas/80 px-7 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-12">
+        <p className="flex items-start gap-2 text-xs leading-6 text-haze sm:max-w-2xl">
           <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
           {actionPlan.disclaimer}
         </p>
