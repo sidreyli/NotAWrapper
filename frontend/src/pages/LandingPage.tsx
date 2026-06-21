@@ -6,7 +6,6 @@ import {
   FileText,
   Lock,
   MapPinned,
-  Quote,
   ScrollText,
   ShieldCheck,
   Sparkles,
@@ -286,19 +285,6 @@ export function LandingPage({ navigate }: { navigate: (path: string) => void }) 
               </div>
             ))}
           </div>
-
-          <Reveal className="mt-14">
-            <figure className="mx-auto max-w-3xl text-center">
-              <Quote className="mx-auto h-9 w-9 text-gold-300" strokeWidth={1.5} />
-              <blockquote className="mt-5 font-display text-2xl font-light italic leading-relaxed text-balance text-emerald-50 sm:text-3xl">
-                "I didn't know I qualified for anything. In a few minutes I had a list and knew
-                exactly which documents to bring."
-              </blockquote>
-              <figcaption className="mt-5 text-sm text-emerald-200/70">
-                A parent of two — the reason we built this
-              </figcaption>
-            </figure>
-          </Reveal>
         </div>
       </section>
 
