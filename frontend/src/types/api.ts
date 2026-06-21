@@ -1,4 +1,7 @@
-export type Language = "en" | "es";
+// BCP 47 language code (e.g. "en", "es", "zh", "vi"). The backend explainer
+// LLM responds in whichever code we send, so this is intentionally open-ended.
+// The full list of options offered in the UI lives in `lib/i18n.ts` (LANGUAGES).
+export type Language = string;
 
 export type EligibilityStatus =
   | "likely_eligible"

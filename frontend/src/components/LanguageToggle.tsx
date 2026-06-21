@@ -1,4 +1,6 @@
+import { Globe } from "lucide-react";
 import type { Language } from "@/types/api";
+import { LANGUAGES } from "@/lib/i18n";
 
 export function LanguageToggle({
   language,
@@ -11,29 +13,28 @@ export function LanguageToggle({
 }) {
   const light = tone === "light";
   return (
-    <div
-      className={`inline-flex items-center rounded-full border p-1 text-sm font-semibold ${
-        light ? "border-white/20 bg-white/10 backdrop-blur" : "border-border bg-paper"
+    <label
+      className={`relative inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-semibold ${
+        light ? "border-white/20 bg-white/10 text-white backdrop-blur" : "border-border bg-paper text-ink"
       }`}
     >
-      {(["en", "es"] as const).map((lang) => (
-        <button
-          key={lang}
-          type="button"
-          onClick={() => onChange(lang)}
-          className={`rounded-full px-3.5 py-1.5 uppercase tracking-wide transition ${
-            language === lang
-              ? light
-                ? "bg-white text-emerald-800 shadow-sm"
-                : "bg-ink text-white"
-              : light
-                ? "text-white/75 hover:text-white"
-                : "text-haze hover:text-ink"
-          }`}
-        >
-          {lang}
-        </button>
-      ))}
-    </div>
+      <Globe className="h-4 w-4 opacity-80" aria-hidden />
+      <span className="sr-only">Language</span>
+      <select
+        value={language}
+        onChange={(event) => onChange(event.target.value)}
+        className={`cursor-pointer appearance-none bg-transparent pr-4 font-semibold outline-none ${
+          light ? "text-white" : "text-ink"
+        }`}
+      >
+        {LANGUAGES.map((lang) => (
+          // option text always renders on the native menu's own surface, so
+          // force readable colors regardless of the trigger's tone.
+          <option key={lang.code} value={lang.code} className="text-ink">
+            {lang.label}
+          </option>
+        ))}
+      </select>
+    </label>
   );
 }

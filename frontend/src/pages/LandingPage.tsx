@@ -43,8 +43,8 @@ const faqItems = [
     a: "This release covers SNAP, Medicaid, CHIP, LIHEAP, WIC, and TANF across CA, TX, NY, FL, and IL."
   },
   {
-    q: "Is it available in Spanish?",
-    a: "Yes — use the EN / ES toggle in the header to switch the interface language."
+    q: "Is it available in other languages?",
+    a: "Yes — use the language dropdown in the header. Your personalized action plan is written in the language you pick, and the interface is fully translated in English and Spanish."
   }
 ];
 
@@ -52,7 +52,7 @@ const trustItems = [
   { icon: ShieldCheck, title: "Rules, not guesses", body: "A deterministic engine decides eligibility. The AI never changes the outcome." },
   { icon: ScrollText, title: "Sources cited", body: "Every result shows its official source, legal basis, and how current the data is." },
   { icon: Lock, title: "Private by design", body: "No name, no SSN, no immigration status. Your session clears in two hours." },
-  { icon: FileText, title: "Plain language", body: "We explain every result in clear, reassuring words — in English or Spanish." },
+  { icon: FileText, title: "Plain language", body: "We explain every result in clear, reassuring words — in your chosen language." },
   { icon: Sparkles, title: "Always free", body: "Aid Compass costs nothing and never sells you anything. Just guidance." },
   { icon: Timer, title: "A few minutes", body: "A guided conversation, one question at a time. Most people finish in about three." }
 ];
