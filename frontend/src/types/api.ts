@@ -1,6 +1,6 @@
 // BCP 47 language code (e.g. "en", "es", "zh", "vi"). The backend explainer
 // LLM responds in whichever code we send, so this is intentionally open-ended.
-// The full list of options offered in the UI lives in `lib/i18n.ts` (LANGUAGES).
+// The full list of options offered in the UI lives in `i18n/languages.json` (LANGUAGES).
 export type Language = string;
 
 export type EligibilityStatus =

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, ChevronDown, Globe } from "lucide-react";
 import type { Language } from "@/types/api";
-import { LANGUAGES } from "@/lib/i18n";
+import { LANGUAGES, useT } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 const ease = [0.16, 1, 0.3, 1] as const;
@@ -17,6 +17,7 @@ export function LanguageToggle({
   tone?: "dark" | "light";
 }) {
   const light = tone === "light";
+  const t = useT();
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -55,7 +56,7 @@ export function LanguageToggle({
         )}
       >
         <Globe className="h-4 w-4 opacity-80" strokeWidth={1.8} aria-hidden />
-        <span className="sr-only">Language</span>
+        <span className="sr-only">{t("nav.language")}</span>
         <span className="min-w-[2.5rem] text-left leading-none">{active.label}</span>
         <ChevronDown
           className={cn("h-4 w-4 opacity-70 transition-transform duration-200", open && "rotate-180")}

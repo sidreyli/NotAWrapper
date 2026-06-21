@@ -9,16 +9,16 @@ import { ResultCard } from "@/components/ResultCard";
 import { ShaderBackground } from "@/components/ShaderBackground";
 import { useAppState } from "@/state/AppState";
 import type { EligibilityResult, EligibilityStatus } from "@/types/api";
-import { t } from "@/lib/i18n";
+import { useT, type MessageKey } from "@/i18n";
 
-const groups: Array<{ title: string; statuses: EligibilityStatus[]; dot: string }> = [
-  { title: "Programs you likely qualify for", statuses: ["likely_eligible"], dot: "bg-emerald-500" },
+const groups: Array<{ titleKey: MessageKey; statuses: EligibilityStatus[]; dot: string }> = [
+  { titleKey: "results.group.likely", statuses: ["likely_eligible"], dot: "bg-emerald-500" },
   {
-    title: "Worth a look",
+    titleKey: "results.group.worth",
     statuses: ["possibly_eligible", "already_receiving", "unable_to_determine"],
     dot: "bg-gold-500"
   },
-  { title: "Probably not a fit right now", statuses: ["likely_ineligible"], dot: "bg-haze" }
+  { titleKey: "results.group.notFit", statuses: ["likely_ineligible"], dot: "bg-haze" }
 ];
 
 // Rough monthly value from the eligible programs that carry a "~$N" estimate.
@@ -32,7 +32,8 @@ function estimateMonthlyValue(results: EligibilityResult[]): number {
 }
 
 export function ResultsPage({ navigate }: { navigate: (path: string) => void }) {
-  const { language, profile, results, actionPlan, setSelectedProgramId, reset } = useAppState();
+  const { profile, results, actionPlan, setSelectedProgramId, reset } = useAppState();
+  const t = useT();
   const [drawerResult, setDrawerResult] = useState<EligibilityResult | null>(null);
   const likelyCount = results.filter((r) => r.status === "likely_eligible").length;
   const monthlyValue = estimateMonthlyValue(results) || 512;
@@ -52,18 +53,18 @@ export function ResultsPage({ navigate }: { navigate: (path: string) => void }) 
           <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-[#04130D]/55 via-transparent to-[#04130D]/65" />
 
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-gold-300">
-            Your results
+            {t("results.kicker")}
           </p>
           <h1 className="mt-3 max-w-2xl font-display text-4xl font-light leading-[1.05] text-balance sm:text-5xl">
-            Based on what you shared, here's what we found.
+            {t("results.heading")}
           </h1>
 
           <div className="mt-5 flex flex-wrap gap-2">
             {[
               profile.state,
-              `Household of ${profile.household_size}`,
-              `${profile.children_under_18} children`,
-              `~$${profile.monthly_gross_income.toLocaleString()}/mo`
+              t("results.chip.household", { count: profile.household_size }),
+              t("results.chip.children", { count: profile.children_under_18 }),
+              t("results.chip.income", { amount: profile.monthly_gross_income.toLocaleString() })
             ].map((chip) => (
               <span
                 key={chip}
@@ -81,7 +82,7 @@ export function ResultsPage({ navigate }: { navigate: (path: string) => void }) 
                   <CountUp to={likelyCount} />
                 </span>
                 <span className="max-w-[8rem] text-sm leading-5 text-emerald-50/80">
-                  programs you likely qualify for
+                  {t("results.stat.programs")}
                 </span>
               </div>
               <div className="hidden h-12 w-px bg-white/20 md:block" />
@@ -90,13 +91,13 @@ export function ResultsPage({ navigate }: { navigate: (path: string) => void }) 
                   <CountUp to={monthlyValue} prefix="$" />
                 </span>
                 <span className="max-w-[9rem] text-sm leading-5 text-emerald-50/80">
-                  estimated monthly value
+                  {t("results.stat.value")}
                 </span>
               </div>
             </div>
             <Button variant="gold" size="lg" onClick={() => navigate("/benefits-cliff")}>
               <TrendingDown />
-              {t(language, "benefitsCliff")}
+              {t("common.benefitsCliff")}
             </Button>
           </div>
         </div>
@@ -109,12 +110,12 @@ export function ResultsPage({ navigate }: { navigate: (path: string) => void }) 
             const groupResults = results.filter((r) => group.statuses.includes(r.status));
             if (!groupResults.length) return null;
             return (
-              <section key={group.title}>
+              <section key={group.titleKey}>
                 <h2 className="mb-4 flex items-center gap-3 font-display text-2xl font-semibold text-ink">
                   <span className={`h-2.5 w-2.5 rounded-full ${group.dot}`} />
-                  {group.title}
+                  {t(group.titleKey)}
                   <span className="text-sm font-medium text-haze">
-                    {groupResults.length} programs
+                    {t("results.groupCount", { count: groupResults.length })}
                   </span>
                 </h2>
                 <div className="space-y-4">
@@ -135,27 +136,27 @@ export function ResultsPage({ navigate }: { navigate: (path: string) => void }) 
         <aside className="lg:sticky lg:top-24">
           <h2 className="mb-4 flex items-center gap-3 font-display text-2xl font-semibold text-ink">
             <span className="h-2.5 w-2.5 rounded-full bg-gold-500" />
-            Your action plan
+            {t("results.actionPlanHeading")}
           </h2>
           <ActionPlanCard
             headless
             actionPlan={actionPlan}
             meta={[
-              { label: "you likely qualify for", value: `${likelyCount} programs` },
-              { label: "estimated monthly value", value: `$${monthlyValue.toLocaleString()}` }
+              { label: t("results.meta.qualify"), value: t("results.meta.programs", { count: likelyCount }) },
+              { label: t("results.meta.value"), value: `$${monthlyValue.toLocaleString()}` }
             ]}
           />
 
           <div className="mt-4 rounded-3xl border border-border bg-paper p-5 shadow-soft">
             <Button className="mb-3 w-full" onClick={() => navigate("/action-center")}>
               <LayoutDashboard />
-              Open personalized Action Center
+              {t("results.openActionCenter")}
               <ArrowRight />
             </Button>
             <div className="flex flex-wrap gap-2">
               <Button variant="outline" size="sm" onClick={() => window.print()}>
                 <Printer />
-                {t(language, "print")}
+                {t("common.print")}
               </Button>
               <Button
                 variant="ghost"
@@ -166,16 +167,15 @@ export function ResultsPage({ navigate }: { navigate: (path: string) => void }) 
                 }}
               >
                 <RotateCcw />
-                {t(language, "startOver")}
+                {t("common.startOver")}
               </Button>
               <Button size="sm" className="ml-auto" onClick={() => navigate("/check-eligibility")}>
-                Ask the assistant
+                {t("results.askAssistant")}
                 <ArrowRight />
               </Button>
             </div>
             <p className="mt-4 text-xs leading-6 text-haze">
-              Every result is produced by a deterministic rules engine using published 2026 federal
-              and state thresholds. The AI only puts results into plain language.
+              {t("results.engineNote")}
             </p>
           </div>
         </aside>

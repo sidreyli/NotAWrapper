@@ -2,6 +2,7 @@ import { ArrowRight, ExternalLink, HelpCircle } from "lucide-react";
 import { Button } from "./Button";
 import { StatusBadge } from "./StatusBadge";
 import { ProgramGlyph } from "@/lib/programs";
+import { useT } from "@/i18n";
 import type { EligibilityResult } from "@/types/api";
 
 export function ResultCard({
@@ -13,6 +14,7 @@ export function ResultCard({
   onExplain: (result: EligibilityResult) => void;
   onDetails: (result: EligibilityResult) => void;
 }) {
+  const t = useT();
   return (
     <article className="group overflow-hidden rounded-3xl border border-border bg-paper shadow-soft transition hover:border-emerald-200 hover:shadow-lift">
       <div className="flex flex-col gap-5 p-6 sm:flex-row sm:items-start sm:justify-between">
@@ -35,7 +37,7 @@ export function ResultCard({
               ))}
               {result.required_documents.length > 3 && (
                 <span className="text-xs font-medium text-haze">
-                  +{result.required_documents.length - 3} more
+                  {t("result.moreDocs", { count: result.required_documents.length - 3 })}
                 </span>
               )}
             </div>
@@ -48,7 +50,7 @@ export function ResultCard({
               {result.estimated_monthly_benefit}
             </p>
             <p className="text-[10px] font-semibold uppercase tracking-wide text-emerald-600/70">
-              estimated
+              {t("result.estimated")}
             </p>
           </div>
         )}
@@ -56,12 +58,12 @@ export function ResultCard({
 
       <div className="flex flex-wrap items-center gap-2 border-t border-border bg-canvas/60 px-6 py-3">
         <Button size="sm" onClick={() => onDetails(result)}>
-          View details
+          {t("common.viewDetails")}
           <ArrowRight />
         </Button>
         <Button size="sm" variant="ghost" onClick={() => onExplain(result)}>
           <HelpCircle />
-          Why this result?
+          {t("common.whyResult")}
         </Button>
         <a
           href={result.apply_url}
@@ -69,7 +71,7 @@ export function ResultCard({
           rel="noreferrer"
           className="ml-auto inline-flex items-center gap-1.5 text-sm font-semibold text-haze transition hover:text-emerald-700"
         >
-          Official application
+          {t("result.officialApplication")}
           <ExternalLink className="h-3.5 w-3.5" />
         </a>
       </div>

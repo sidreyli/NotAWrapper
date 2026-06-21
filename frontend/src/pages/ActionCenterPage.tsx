@@ -19,6 +19,7 @@ import { loadActionCenter } from "@/lib/actionCenterStore";
 import { loadSession } from "@/lib/sessionStore";
 import { cn } from "@/lib/utils";
 import { CloudSyncCard } from "@/components/CloudSyncCard";
+import { useT, type MessageKey } from "@/i18n";
 
 const ResourceNavigatorPage = lazy(() => import("./ResourceNavigatorPage").then((module) => ({ default: module.ResourceNavigatorPage })));
 const DocumentCopilotPage = lazy(() => import("./DocumentCopilotPage").then((module) => ({ default: module.DocumentCopilotPage })));
@@ -27,46 +28,10 @@ const TimelinePage = lazy(() => import("./TimelinePage").then((module) => ({ def
 type Navigate = (path: string) => void;
 
 const tools = [
-  {
-    id: "eligibility",
-    eyebrow: "Discover",
-    title: "Check what you may qualify for",
-    body: "A short conversation checks published program rules and explains every result.",
-    action: "Start a benefits check",
-    path: "/check-eligibility",
-    icon: Compass,
-    tone: "emerald"
-  },
-  {
-    id: "documents",
-    eyebrow: "Understand",
-    title: "Make sense of a letter or document",
-    body: "Upload a notice, paystub, or utility bill. Compass finds dates, useful details, and missing paperwork.",
-    action: "Review a document",
-    path: "/action-center/documents",
-    icon: FileSearch,
-    tone: "gold"
-  },
-  {
-    id: "resources",
-    eyebrow: "Find",
-    title: "Locate help near you",
-    body: "Find enrollment offices, clinics, food support, and utility assistance using only a ZIP code.",
-    action: "Search nearby help",
-    path: "/action-center/resources",
-    icon: MapPinned,
-    tone: "sky"
-  },
-  {
-    id: "timeline",
-    eyebrow: "Organize",
-    title: "Turn next steps into a plan",
-    body: "Keep deadlines, documents, appointments, and follow-ups together, then add them to your calendar.",
-    action: "Open my timeline",
-    path: "/action-center/timeline",
-    icon: CalendarDays,
-    tone: "lilac"
-  }
+  { id: "eligibility", path: "/check-eligibility", icon: Compass, tone: "emerald" },
+  { id: "documents", path: "/action-center/documents", icon: FileSearch, tone: "gold" },
+  { id: "resources", path: "/action-center/resources", icon: MapPinned, tone: "sky" },
+  { id: "timeline", path: "/action-center/timeline", icon: CalendarDays, tone: "lilac" }
 ] as const;
 
 const toneClasses = {
@@ -90,6 +55,11 @@ export function ActionCenterPage({ navigate, path }: { navigate: Navigate; path:
     return <ActionCenterPlaceholder navigate={navigate} path={path} />;
   }
 
+  return <ActionCenterHome navigate={navigate} />;
+}
+
+function ActionCenterHome({ navigate }: { navigate: Navigate }) {
+  const t = useT();
   const session = loadSession();
   const center = loadActionCenter();
   const hasResults = Boolean(session?.profile && session.results?.length);
@@ -106,27 +76,26 @@ export function ActionCenterPage({ navigate, path }: { navigate: Navigate; path:
           <Reveal>
             <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-gold-300">
               <Sparkles className="h-4 w-4" />
-              Your Action Center
+              {t("ac.kicker")}
             </p>
             <h1 className="mt-4 max-w-3xl font-display text-5xl font-light leading-[0.98] tracking-[-0.02em] text-balance sm:text-6xl">
-              Start with whatever feels most urgent.
+              {t("ac.heading")}
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-emerald-50/82">
-              You do not need to complete an eligibility check first. Understand a letter, find local help,
-              or begin a plan now—Compass connects the pieces as you go.
+              {t("ac.subtitle")}
             </p>
           </Reveal>
 
           <Reveal delay={0.1}>
             <div className="rounded-[1.75rem] border border-white/15 bg-white/10 p-5 backdrop-blur-xl">
               <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-100/70">
-                Your case file
+                {t("ac.caseFile")}
               </p>
               <div className="mt-4 grid grid-cols-3 gap-2">
                 {[
-                  [preparedDocuments, "documents"],
-                  [savedPlaces, "places"],
-                  [openTasks, "open tasks"]
+                  [preparedDocuments, t("ac.stat.documents")],
+                  [savedPlaces, t("ac.stat.places")],
+                  [openTasks, t("ac.stat.openTasks")]
                 ].map(([value, label]) => (
                   <div key={label} className="rounded-2xl bg-black/12 px-3 py-3 text-center ring-1 ring-white/10">
                     <p className="font-display text-2xl font-semibold text-white">{value}</p>
@@ -138,7 +107,7 @@ export function ActionCenterPage({ navigate, path }: { navigate: Navigate; path:
               </div>
               <p className="mt-4 flex items-start gap-2 text-xs leading-5 text-emerald-50/70">
                 <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-gold-300" />
-                Stored only in this browser and cleared with your session.
+                {t("ac.storedNote")}
               </p>
             </div>
           </Reveal>
@@ -149,11 +118,11 @@ export function ActionCenterPage({ navigate, path }: { navigate: Navigate; path:
         <div>
           <Reveal className="mb-6 flex items-end justify-between gap-5">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-600">Choose a starting point</p>
-              <h2 className="mt-2 font-display text-3xl font-semibold text-ink">What do you need today?</h2>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-600">{t("ac.chooseKicker")}</p>
+              <h2 className="mt-2 font-display text-3xl font-semibold text-ink">{t("ac.chooseHeading")}</h2>
             </div>
             <p className="hidden max-w-xs text-right text-sm leading-6 text-haze sm:block">
-              Each tool works on its own. Using more of them makes your plan more specific.
+              {t("ac.chooseSubtitle")}
             </p>
           </Reveal>
 
@@ -174,14 +143,14 @@ export function ActionCenterPage({ navigate, path }: { navigate: Navigate; path:
                     <Icon className="h-6 w-6" strokeWidth={1.8} />
                   </span>
                   <span>
-                    <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-haze">{tool.eyebrow}</span>
+                    <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-haze">{t(`ac.tool.${tool.id}.eyebrow` as MessageKey)}</span>
                     <span className="mt-1 block font-display text-[1.35rem] font-semibold leading-tight text-ink">
-                      {tool.title}
+                      {t(`ac.tool.${tool.id}.title` as MessageKey)}
                     </span>
-                    <span className="mt-2 block max-w-2xl text-sm leading-6 text-haze">{tool.body}</span>
+                    <span className="mt-2 block max-w-2xl text-sm leading-6 text-haze">{t(`ac.tool.${tool.id}.body` as MessageKey)}</span>
                   </span>
                   <span className="mt-2 inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 sm:mt-0">
-                    {tool.action}
+                    {t(`ac.tool.${tool.id}.action` as MessageKey)}
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </span>
                 </button>
@@ -195,21 +164,19 @@ export function ActionCenterPage({ navigate, path }: { navigate: Navigate; path:
             <span className="grid h-11 w-11 place-items-center rounded-2xl bg-emerald-600 text-white shadow-soft">
               {hasResults ? <CheckCircle2 className="h-5 w-5" /> : <FolderOpen className="h-5 w-5" />}
             </span>
-            <p className="mt-5 text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-700">Suggested next move</p>
+            <p className="mt-5 text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-700">{t("ac.suggestedKicker")}</p>
             <h2 className="mt-2 font-display text-2xl font-semibold leading-tight text-ink">
-              {hasResults ? "Bring your results into a real plan." : "Tell Compass what is pressing."}
+              {hasResults ? t("ac.suggest.titleResults") : t("ac.suggest.titleNoResults")}
             </h2>
             <p className="mt-3 text-sm leading-6 text-haze">
-              {hasResults
-                ? "Your eligibility results are ready. Add a document or nearby location to make the next steps concrete."
-                : "If you have a letter with a deadline, begin there. Otherwise, the benefits check takes about three minutes."}
+              {hasResults ? t("ac.suggest.bodyResults") : t("ac.suggest.bodyNoResults")}
             </p>
             <Button
               className="mt-6 w-full"
               onClick={() => navigate(hasResults ? "/action-center/documents" : "/check-eligibility")}
             >
               {hasResults ? <ClipboardCheck /> : <Compass />}
-              {hasResults ? "Add a document" : "Start benefits check"}
+              {hasResults ? t("ac.suggest.addDoc") : t("ac.suggest.startCheck")}
             </Button>
           </aside>
           <CloudSyncCard />
@@ -224,6 +191,7 @@ function ToolFallback() {
 }
 
 function ActionCenterPlaceholder({ navigate, path }: { navigate: Navigate; path: string }) {
+  const t = useT();
   const segments = path.split("/").filter(Boolean);
   const label = segments[segments.length - 1]?.replace(/-/g, " ") ?? "tool";
   return (
@@ -233,12 +201,12 @@ function ActionCenterPlaceholder({ navigate, path }: { navigate: Navigate; path:
         onClick={() => navigate("/action-center")}
         className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700"
       >
-        <ArrowLeft className="h-4 w-4" /> Back to Action Center
+        <ArrowLeft className="h-4 w-4" /> {t("ac.backToCenter")}
       </button>
       <div className="mt-8 rounded-[2rem] border border-border bg-paper p-10 shadow-soft">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-600">Action Center</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-600">{t("ac.label")}</p>
         <h1 className="mt-3 font-display text-4xl font-semibold capitalize text-ink">{label}</h1>
-        <p className="mt-4 text-haze">This tool is the next feature slice being connected.</p>
+        <p className="mt-4 text-haze">{t("ac.placeholderBody")}</p>
       </div>
     </section>
   );

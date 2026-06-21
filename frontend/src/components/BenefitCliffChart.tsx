@@ -9,10 +9,12 @@ import {
   YAxis
 } from "recharts";
 import type { CliffResponse } from "@/types/api";
+import { useT } from "@/i18n";
 
 const money = (n: number) => `$${Math.round(n).toLocaleString()}`;
 
 export function BenefitCliffChart({ cliff }: { cliff: CliffResponse }) {
+  const t = useT();
   const data = cliff.data_points.map((p) => ({
     income: p.monthly_income,
     total: p.net_resources,
@@ -62,10 +64,10 @@ export function BenefitCliffChart({ cliff }: { cliff: CliffResponse }) {
               boxShadow: "0 20px 50px -24px rgba(8,38,28,0.3)",
               fontSize: 13
             }}
-            labelFormatter={(v) => `Income: ${money(Number(v))}/mo`}
+            labelFormatter={(v) => t("cliff.tooltipIncome", { amount: money(Number(v)) })}
             formatter={(value, name) => [
               money(Number(value)),
-              name === "total" ? "Total resources" : "Benefit value"
+              name === "total" ? t("cliff.totalResources") : t("cliff.benefitValue")
             ]}
           />
           <Area

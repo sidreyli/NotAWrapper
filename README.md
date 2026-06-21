@@ -35,9 +35,12 @@ The guiding principle is that **the AI never decides who qualifies for anything.
 - **Benefits cliff visualization** — net resources charted across income levels, with
   cliff zones explained in plain language.
 - **Local resource finder** — nearby food banks, clinics, and offices via OpenStreetMap.
-- **Multilingual** — a language dropdown offers 20+ languages. The personalized action
-  plan is written in the selected language; the interface is fully translated for
-  English and Spanish and falls back to English elsewhere.
+- **Multilingual** — a language dropdown offers 24 languages, and the **entire
+  interface** is translated, not just the AI output. UI strings live in static locale
+  files (`frontend/src/i18n/locales/`) generated from a single English source; the
+  personalized action plan is also written in the selected language. Right-to-left
+  scripts (Arabic, Urdu, Persian) flip the layout automatically, and any missing string
+  falls back to English so the UI never blanks out.
 - **Optional cloud sync** — anonymous users need no account. Signing in with **Clerk**
   lets a user explicitly save a reviewed case file to **Supabase**, protected by
   row-level security so each user can only read their own data.
@@ -108,6 +111,24 @@ Frontend environment variables (`frontend/.env`):
 
 Start the backend before the frontend. Cloud sign-in and saved case files are entirely
 optional — without the Clerk and Supabase keys the app runs fully anonymously.
+
+### Translations (i18n)
+
+The English UI lives in `frontend/src/i18n/locales/en.json` — the single source of
+truth. The other 23 languages are static JSON files generated from it by a script that
+uses your Anthropic key (placeholders like `{count}` and `<em>` markup are preserved):
+
+```bash
+cd frontend
+ANTHROPIC_API_KEY=sk-... npm run i18n:generate           # fill any missing strings for all languages
+ANTHROPIC_API_KEY=sk-... npm run i18n:generate -- --force # re-translate everything
+ANTHROPIC_API_KEY=sk-... npm run i18n:generate -- --lang=es,fr
+```
+
+The generated `locales/<code>.json` files are committed and loaded at runtime (English
+is bundled; other languages load on demand). When you add or change an English string,
+re-run the script to fill in the new keys. To offer a new language, add it to
+`frontend/src/i18n/languages.json` and run the generator.
 
 ### Tests
 

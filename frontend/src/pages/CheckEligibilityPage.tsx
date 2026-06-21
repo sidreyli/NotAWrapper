@@ -20,6 +20,7 @@ import {
 } from "@/lib/api";
 import { loadSession, saveSession, type ChatMessage, type Phase } from "@/lib/sessionStore";
 import { useAppState } from "@/state/AppState";
+import { useT } from "@/i18n";
 import type { ActionPlanResponse, ChatTurn, EligibilityResult, UserProfile } from "@/types/api";
 
 let messageId = 0;
@@ -28,6 +29,7 @@ const nextId = () => (messageId += 1);
 export function CheckEligibilityPage({ navigate }: { navigate: (path: string) => void }) {
   const { language, profile, results, actionPlan, setProfile, setResults, setActionPlan } =
     useAppState();
+  const t = useT();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [phase, setPhase] = useState<Phase>("intake");
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -78,10 +80,7 @@ export function CheckEligibilityPage({ navigate }: { navigate: (path: string) =>
         setSessionId(response.session_id);
         pushText("assistant", response.reply);
       } catch {
-        pushText(
-          "assistant",
-          "I'm having trouble starting right now. Please make sure the server is running, then refresh to try again."
-        );
+        pushText("assistant", t("check.msg.startError"));
       } finally {
         setLoading(false);
       }
@@ -99,15 +98,9 @@ export function CheckEligibilityPage({ navigate }: { navigate: (path: string) =>
       setResults(checked);
       setActionPlan(plan);
       saveSession({ profile: collectedProfile, results: checked, actionPlan: plan });
-      pushText(
-        "assistant",
-        "Your results are ready — they're on the right. I can answer questions about any of these programs: what they cover, the documents you'll need, or how to apply. What would you like to know?"
-      );
+      pushText("assistant", t("check.msg.resultsReady"));
     } catch {
-      pushText(
-        "assistant",
-        "I collected your information but couldn't complete the eligibility check. Please try again shortly."
-      );
+      pushText("assistant", t("check.msg.handoffError"));
     } finally {
       setPhase("learn");
       setMobileTab("results");
@@ -135,7 +128,7 @@ export function CheckEligibilityPage({ navigate }: { navigate: (path: string) =>
         }
         setLoading(false);
       } catch {
-        pushText("assistant", "Sorry, something went wrong. Could you say that again?");
+        pushText("assistant", t("check.msg.intakeError"));
         setLoading(false);
       }
       return;
@@ -151,7 +144,7 @@ export function CheckEligibilityPage({ navigate }: { navigate: (path: string) =>
       ];
       pushText("assistant", reply);
     } catch {
-      pushText("assistant", "Sorry, I couldn't answer that just now. Please try again.");
+      pushText("assistant", t("check.msg.learnError"));
     } finally {
       setLoading(false);
     }
@@ -159,10 +152,10 @@ export function CheckEligibilityPage({ navigate }: { navigate: (path: string) =>
 
   const progress = isLearn ? 100 : phase === "checking" ? 80 : Math.min(72, 16 + messages.length * 11);
   const eyebrow = isLearn
-    ? "Program assistant"
+    ? t("check.eyebrow.assistant")
     : phase === "checking"
-      ? "Checking the rules"
-      : "Eligibility check";
+      ? t("check.eyebrow.checking")
+      : t("check.eyebrow.intake");
 
   return (
     <div className="relative isolate bg-canvas">
@@ -182,7 +175,7 @@ export function CheckEligibilityPage({ navigate }: { navigate: (path: string) =>
                   {eyebrow}
                 </p>
                 <h1 className="font-display text-xl font-semibold leading-none text-ink">
-                  Your benefits guide
+                  {t("check.title")}
                 </h1>
               </div>
             </div>
@@ -214,7 +207,7 @@ export function CheckEligibilityPage({ navigate }: { navigate: (path: string) =>
                   className="hidden sm:inline-flex"
                   onClick={() => navigate("/results")}
                 >
-                  Full results
+                  {t("check.fullResults")}
                   <ArrowRight />
                 </Button>
               )}
@@ -235,11 +228,10 @@ export function CheckEligibilityPage({ navigate }: { navigate: (path: string) =>
             <ChatComposer
               onSend={handleSend}
               disabled={loading || phase === "checking"}
-              placeholder={isLearn ? "Ask about a program…" : "Type your answer…"}
+              placeholder={isLearn ? t("check.composer.learn") : t("check.composer.intake")}
             />
             <p className="mt-2 px-2 text-center text-xs text-haze">
-              Eligibility is decided by a deterministic rules engine, not by AI. General information
-              only — not legal or financial advice.
+              {t("check.disclaimer")}
             </p>
           </div>
         </section>
@@ -266,13 +258,13 @@ export function CheckEligibilityPage({ navigate }: { navigate: (path: string) =>
   );
 }
 
-const reassurances = [
-  { icon: Lock, text: "No name, SSN, or immigration status — ever." },
-  { icon: ShieldCheck, text: "A deterministic engine decides eligibility, not the AI." },
-  { icon: Timer, text: "Most people finish in about three minutes." }
-];
-
 function GuidePanel({ progress, checking }: { progress: number; checking: boolean }) {
+  const t = useT();
+  const reassurances = [
+    { icon: Lock, text: t("check.guide.re1") },
+    { icon: ShieldCheck, text: t("check.guide.re2") },
+    { icon: Timer, text: t("check.guide.re3") }
+  ];
   return (
     <div className="relative isolate flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-white/10 p-7 text-white shadow-lift sm:p-8">
       <ShaderBackground colors={CHILL} speed={0.26} distortion={0.7} swirl={0.5} />
@@ -283,16 +275,15 @@ function GuidePanel({ progress, checking }: { progress: number; checking: boolea
       <div className="relative flex h-full flex-col">
         <AssistantMark size="lg" live />
         <h2 className="mt-6 font-display text-[2rem] font-light leading-[1.08] text-balance">
-          {checking ? "Checking your answers against the 2026 rules." : "A few questions, then a real answer."}
+          {checking ? t("check.guide.headingChecking") : t("check.guide.heading")}
         </h2>
         <p className="mt-3 max-w-sm leading-7 text-emerald-50/80">
-          We ask one thing at a time, then compare your answers to published federal and state
-          thresholds — no guessing, no judgment.
+          {t("check.guide.body")}
         </p>
 
         <div className="mt-8">
           <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.14em] text-emerald-100/70">
-            <span>{checking ? "Running the rules" : "Collecting details"}</span>
+            <span>{checking ? t("check.guide.progressChecking") : t("check.guide.progressCollecting")}</span>
             <span>{progress}%</span>
           </div>
           <Progress
@@ -315,7 +306,7 @@ function GuidePanel({ progress, checking }: { progress: number; checking: boolea
         <div className="mt-auto pt-8">
           <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-emerald-100/70">
             <Layers className="h-3.5 w-3.5" />
-            Programs we check
+            {t("check.guide.programs")}
           </p>
           <div className="mt-3 flex flex-wrap gap-1.5">
             {Object.keys(PROGRAMS).map((id) => (
@@ -334,13 +325,14 @@ function GuidePanel({ progress, checking }: { progress: number; checking: boolea
 }
 
 function CheckingCard() {
+  const t = useT();
   return (
     <div className="flex animate-msg-in gap-3">
       <AssistantMark size="sm" live />
       <Card className="flex items-center gap-3 rounded-[1.25rem] rounded-tl-md border-emerald-200 bg-mint/60 px-4 py-3 shadow-soft">
         <Loader2 className="h-4 w-4 animate-spin text-emerald-600" />
         <span className="text-sm font-medium text-emerald-800">
-          Checking your answers against the 2026 rules…
+          {t("check.checkingCard")}
         </span>
       </Card>
     </div>
@@ -356,6 +348,7 @@ function ResultsLedger({
   actionPlan: ActionPlanResponse;
   navigate: (path: string) => void;
 }) {
+  const t = useT();
   const eligible = results.filter(
     (r) => r.status === "likely_eligible" || r.status === "possibly_eligible"
   );
@@ -369,10 +362,12 @@ function ResultsLedger({
         </span>
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-emerald-700">
-            Your results
+            {t("check.ledger.kicker")}
           </p>
           <p className="font-display text-xl font-semibold text-ink">
-            {eligible.length} program{eligible.length === 1 ? "" : "s"} you may qualify for
+            {t(eligible.length === 1 ? "check.ledger.programsOne" : "check.ledger.programsOther", {
+              count: eligible.length
+            })}
           </p>
         </div>
       </div>
@@ -386,7 +381,7 @@ function ResultsLedger({
       </div>
 
       <Button className="w-full" onClick={() => navigate("/results")}>
-        View full results &amp; action plan
+        {t("check.ledger.viewFull")}
         <ArrowRight />
       </Button>
     </div>
@@ -400,6 +395,7 @@ function LedgerCard({
   result: EligibilityResult;
   navigate: (path: string) => void;
 }) {
+  const t = useT();
   return (
     <button
       type="button"
@@ -423,7 +419,7 @@ function LedgerCard({
             <p className="font-display text-lg font-semibold text-emerald-700">
               {result.estimated_monthly_benefit}
             </p>
-            <p className="text-[10px] font-medium uppercase tracking-wide text-haze">est.</p>
+            <p className="text-[10px] font-medium uppercase tracking-wide text-haze">{t("check.ledger.est")}</p>
           </div>
         )}
       </div>

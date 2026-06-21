@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { AppShell } from "./components/AppShell";
+import { useT } from "./i18n";
 
 const ActionCenterPage = lazy(() => import("./pages/ActionCenterPage").then((module) => ({ default: module.ActionCenterPage })));
 const BenefitsCliffPage = lazy(() => import("./pages/BenefitsCliffPage").then((module) => ({ default: module.BenefitsCliffPage })));
@@ -67,11 +68,12 @@ export function App() {
 }
 
 function RouteFallback() {
+  const t = useT();
   return (
     <div className="grid min-h-[60vh] place-items-center bg-canvas px-6">
       <div className="text-center">
         <span className="mx-auto block h-8 w-8 animate-spin rounded-full border-2 border-emerald-100 border-t-emerald-600" />
-        <p className="mt-4 text-sm font-semibold text-haze">Opening Aid Compass…</p>
+        <p className="mt-4 text-sm font-semibold text-haze">{t("app.loading")}</p>
       </div>
     </div>
   );

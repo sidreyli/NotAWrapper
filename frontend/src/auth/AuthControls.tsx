@@ -1,6 +1,7 @@
 import { Cloud } from "lucide-react";
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 import { clerkConfigured } from "./OptionalClerkProvider";
+import { useT } from "@/i18n";
 
 export function AuthControls() {
   if (!clerkConfigured) return null;
@@ -8,6 +9,7 @@ export function AuthControls() {
 }
 
 function ConfiguredAuthControls() {
+  const t = useT();
   return (
     <>
       <SignedOut>
@@ -17,7 +19,7 @@ function ConfiguredAuthControls() {
             className="hidden items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-white/15 sm:inline-flex"
           >
             <Cloud className="h-3.5 w-3.5 text-gold-300" />
-            Save my plan
+            {t("auth.savePlan")}
           </button>
         </SignInButton>
       </SignedOut>

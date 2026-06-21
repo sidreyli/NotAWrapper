@@ -14,6 +14,7 @@ import {
 import { ShaderBackground } from "@/components/ShaderBackground";
 import { Button } from "@/components/Button";
 import { Reveal } from "@/components/Motion";
+import { RichText } from "@/components/RichText";
 import { ProgramGlyph, PROGRAMS } from "@/lib/programs";
 import {
   Accordion,
@@ -21,43 +22,27 @@ import {
   AccordionItem,
   AccordionTrigger
 } from "@/components/ui/accordion";
-import { useAppState } from "@/state/AppState";
-import { t } from "@/lib/i18n";
-
-const faqItems = [
-  {
-    q: "Is this an official application?",
-    a: "No. Aid Compass helps you understand what you may qualify for and points you to the official applications. We never submit anything for you."
-  },
-  {
-    q: "Do I need to give my Social Security number?",
-    a: "No. The guided check never asks for your name, SSN, or exact address."
-  },
-  {
-    q: "Does the AI decide if I qualify?",
-    a: "No. Eligibility comes from a deterministic rules engine using published 2026 program thresholds. The AI only explains the results in plain language."
-  },
-  {
-    q: "Which states and programs are covered?",
-    a: "This release covers SNAP, Medicaid, CHIP, LIHEAP, WIC, and TANF across CA, TX, NY, FL, and IL."
-  },
-  {
-    q: "Is it available in other languages?",
-    a: "Yes — use the language dropdown in the header. Your personalized action plan is written in the language you pick, and the interface is fully translated in English and Spanish."
-  }
-];
-
-const trustItems = [
-  { icon: ShieldCheck, title: "Rules, not guesses", body: "A deterministic engine decides eligibility. The AI never changes the outcome." },
-  { icon: ScrollText, title: "Sources cited", body: "Every result shows its official source, legal basis, and how current the data is." },
-  { icon: Lock, title: "Private by design", body: "No name, no SSN, no immigration status. Your session clears in two hours." },
-  { icon: FileText, title: "Plain language", body: "We explain every result in clear, reassuring words — in your chosen language." },
-  { icon: Sparkles, title: "Always free", body: "Aid Compass costs nothing and never sells you anything. Just guidance." },
-  { icon: Timer, title: "A few minutes", body: "A guided conversation, one question at a time. Most people finish in about three." }
-];
+import { useT, type MessageKey } from "@/i18n";
 
 export function LandingPage({ navigate }: { navigate: (path: string) => void }) {
-  const { language } = useAppState();
+  const t = useT();
+
+  const faqItems = [
+    { q: t("landing.faq.q1"), a: t("landing.faq.a1") },
+    { q: t("landing.faq.q2"), a: t("landing.faq.a2") },
+    { q: t("landing.faq.q3"), a: t("landing.faq.a3") },
+    { q: t("landing.faq.q4"), a: t("landing.faq.a4") },
+    { q: t("landing.faq.q5"), a: t("landing.faq.a5") }
+  ];
+
+  const trustItems = [
+    { icon: ShieldCheck, title: t("landing.trust.rules.title"), body: t("landing.trust.rules.body") },
+    { icon: ScrollText, title: t("landing.trust.sources.title"), body: t("landing.trust.sources.body") },
+    { icon: Lock, title: t("landing.trust.private.title"), body: t("landing.trust.private.body") },
+    { icon: FileText, title: t("landing.trust.plain.title"), body: t("landing.trust.plain.body") },
+    { icon: Sparkles, title: t("landing.trust.free.title"), body: t("landing.trust.free.body") },
+    { icon: Timer, title: t("landing.trust.time.title"), body: t("landing.trust.time.body") }
+  ];
 
   return (
     <>
@@ -73,9 +58,9 @@ export function LandingPage({ navigate }: { navigate: (path: string) => void }) 
         <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-6 pb-28 pt-[10.5rem] lg:grid-cols-[1.05fr_0.95fr] lg:pb-36 lg:pt-[12rem]">
           <div className="animate-fade-up">
             <h1 className="font-display text-[3.4rem] font-light leading-[0.98] tracking-[-0.02em] text-white text-balance sm:text-7xl">
-              Find the support{" "}
+              {t("landing.hero.titleLead")}{" "}
               <span className="relative whitespace-nowrap italic">
-                you've earned
+                {t("landing.hero.titleEmph")}
                 <svg
                   className="absolute -bottom-2 left-0 w-full text-gold-300"
                   viewBox="0 0 300 12"
@@ -95,13 +80,12 @@ export function LandingPage({ navigate }: { navigate: (path: string) => void }) 
             </h1>
 
             <p className="mt-8 max-w-xl text-lg leading-8 text-emerald-50/85">
-              Have a short conversation. We check the real eligibility rules — not a guess — and show
-              which programs fit, what you'd receive, and exactly what to do next.
+              {t("landing.hero.subtitle")}
             </p>
 
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Button size="lg" variant="gold" onClick={() => navigate("/action-center")}>
-                Open your Action Center
+                {t("landing.hero.ctaPrimary")}
                 <ArrowRight className="transition group-hover:translate-x-0.5" />
               </Button>
               <Button
@@ -110,12 +94,12 @@ export function LandingPage({ navigate }: { navigate: (path: string) => void }) 
                 className="border-white/30 bg-white/5 text-white backdrop-blur hover:bg-white/15"
                 onClick={() => navigate("/check-eligibility")}
               >
-                Check my eligibility
+                {t("landing.hero.ctaSecondary")}
               </Button>
             </div>
 
             <div className="mt-9 flex flex-wrap items-center gap-x-7 gap-y-3 text-sm font-medium text-emerald-50/80">
-              {["No SSN required", "About 3 minutes", "Sources cited"].map((label) => (
+              {[t("landing.hero.badge1"), t("landing.hero.badge2"), t("landing.hero.badge3")].map((label) => (
                 <span key={label} className="inline-flex items-center gap-2">
                   <span className="grid h-5 w-5 place-items-center rounded-full bg-white/15 text-gold-300 backdrop-blur">
                     <svg viewBox="0 0 12 12" className="h-3 w-3" fill="none">
@@ -135,21 +119,21 @@ export function LandingPage({ navigate }: { navigate: (path: string) => void }) 
               <div className="mb-4 flex items-center justify-between">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.14em] text-haze">
-                    Your Action Center
+                    {t("landing.preview.kicker")}
                   </p>
-                  <p className="font-display text-xl font-semibold text-ink">Start wherever you need help</p>
+                  <p className="font-display text-xl font-semibold text-ink">{t("landing.preview.title")}</p>
                 </div>
                 <span className="rounded-full bg-mint px-3 py-1 text-xs font-bold text-emerald-700">
-                  Private
+                  {t("landing.preview.private")}
                 </span>
               </div>
 
               <div className="grid grid-cols-2 gap-2.5">
                 {[
-                  { icon: ClipboardCheck, label: "Check benefits", tone: "bg-emerald-100 text-emerald-700" },
-                  { icon: FileSearch, label: "Understand a letter", tone: "bg-gold-100 text-gold-600" },
-                  { icon: MapPinned, label: "Find nearby help", tone: "bg-sky/10 text-sky" },
-                  { icon: CalendarDays, label: "Plan next steps", tone: "bg-lilac/10 text-lilac" }
+                  { icon: ClipboardCheck, label: t("landing.preview.tool1"), tone: "bg-emerald-100 text-emerald-700" },
+                  { icon: FileSearch, label: t("landing.preview.tool2"), tone: "bg-gold-100 text-gold-600" },
+                  { icon: MapPinned, label: t("landing.preview.tool3"), tone: "bg-sky/10 text-sky" },
+                  { icon: CalendarDays, label: t("landing.preview.tool4"), tone: "bg-lilac/10 text-lilac" }
                 ].map(({ icon: Icon, label, tone }, i) => (
                   <button
                     key={label}
@@ -167,7 +151,7 @@ export function LandingPage({ navigate }: { navigate: (path: string) => void }) 
               </div>
 
               <div className="mt-4 flex items-center justify-between rounded-2xl bg-emerald-700 px-4 py-3 text-white">
-                <span className="text-sm text-emerald-50">Use one tool or connect all four</span>
+                <span className="text-sm text-emerald-50">{t("landing.preview.footer")}</span>
                 <ArrowRight className="h-4 w-4 text-gold-300" />
               </div>
             </div>
@@ -189,7 +173,7 @@ export function LandingPage({ navigate }: { navigate: (path: string) => void }) 
                     className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-border bg-canvas px-4 py-2 text-sm font-medium text-ink"
                   >
                     <ProgramGlyph id={id} className="h-6 w-6 rounded-lg" iconClassName="h-3.5 w-3.5" />
-                    {id.toUpperCase()} · {PROGRAMS[id].category}
+                    {id.toUpperCase()} · {t(`program.${id}.category` as MessageKey)}
                   </span>
                 ))}
               </div>
@@ -202,17 +186,17 @@ export function LandingPage({ navigate }: { navigate: (path: string) => void }) 
       <section id="how-it-works" className="mx-auto max-w-6xl px-6 py-24">
         <Reveal>
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-600">
-            Simple and clear
+            {t("landing.how.kicker")}
           </p>
           <h2 className="mt-3 max-w-2xl font-display text-5xl font-light leading-tight text-ink text-balance">
-            Three steps from <span className="italic text-emerald-600">unsure</span> to a plan.
+            <RichText text={t("landing.how.heading")} emphasisClassName="italic text-emerald-600" />
           </h2>
         </Reveal>
         <div className="mt-14 grid gap-5 md:grid-cols-3">
           {[
-            { n: "01", title: "Tell us a little", body: "A short, friendly conversation — one question at a time. No name, no SSN, no jargon." },
-            { n: "02", title: "We check the real rules", body: "A deterministic engine compares your answers to published 2026 federal and state thresholds." },
-            { n: "03", title: "You get a clear plan", body: "See what fits, why, what you'd receive, and exactly which documents to bring." }
+            { n: "01", title: t("landing.how.step1.title"), body: t("landing.how.step1.body") },
+            { n: "02", title: t("landing.how.step2.title"), body: t("landing.how.step2.body") },
+            { n: "03", title: t("landing.how.step3.title"), body: t("landing.how.step3.body") }
           ].map((step, i) => (
             <Reveal key={step.n} delay={i * 0.1}>
               <div className="group relative h-full overflow-hidden rounded-3xl border border-border bg-paper p-8 shadow-soft transition hover:-translate-y-1 hover:shadow-lift">
@@ -234,27 +218,24 @@ export function LandingPage({ navigate }: { navigate: (path: string) => void }) 
           <Reveal className="mb-12 grid gap-6 md:grid-cols-[1fr_0.7fr] md:items-end">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-600">
-                What we cover
+                {t("landing.programs.kicker")}
               </p>
-              <h2 className="mt-3 font-display text-5xl font-light text-ink">Programs we check</h2>
+              <h2 className="mt-3 font-display text-5xl font-light text-ink">{t("landing.programs.heading")}</h2>
             </div>
-            <p className="text-lg leading-8 text-haze">
-              Six federal and state programs across California, Texas, New York, Florida, and
-              Illinois.
-            </p>
+            <p className="text-lg leading-8 text-haze">{t("landing.programs.subtitle")}</p>
           </Reveal>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {Object.entries(PROGRAMS).map(([id, meta], i) => (
+            {Object.entries(PROGRAMS).map(([id], i) => (
               <Reveal key={id} delay={(i % 3) * 0.08}>
                 <div className="group h-full rounded-3xl border border-border bg-canvas p-6 transition hover:-translate-y-1 hover:border-emerald-200 hover:bg-paper hover:shadow-lift">
                   <ProgramGlyph id={id} className="h-14 w-14" iconClassName="h-7 w-7" />
                   <p className="mt-5 text-xs font-semibold uppercase tracking-[0.14em] text-haze">
-                    {meta.category}
+                    {t(`program.${id}.category` as MessageKey)}
                   </p>
                   <h3 className="mt-1 font-display text-2xl font-semibold text-ink">
                     {id.toUpperCase()}
                   </h3>
-                  <p className="mt-2 leading-7 text-haze">{meta.blurb}</p>
+                  <p className="mt-2 leading-7 text-haze">{t(`program.${id}.blurb` as MessageKey)}</p>
                 </div>
               </Reveal>
             ))}
@@ -270,10 +251,10 @@ export function LandingPage({ navigate }: { navigate: (path: string) => void }) 
         <div className="relative mx-auto max-w-6xl px-6">
           <Reveal>
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-gold-300">
-              Built with care
+              {t("landing.trust.kicker")}
             </p>
             <h2 className="mt-3 max-w-2xl font-display text-5xl font-light leading-tight text-balance">
-              Why people <span className="italic text-emerald-300">trust</span> Aid Compass
+              <RichText text={t("landing.trust.heading")} emphasisClassName="italic text-emerald-300" />
             </h2>
           </Reveal>
           <div className="mt-14 grid gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/10 md:grid-cols-3">
@@ -292,9 +273,9 @@ export function LandingPage({ navigate }: { navigate: (path: string) => void }) 
       <section id="faq" className="mx-auto max-w-3xl px-6 py-24">
         <Reveal className="text-center">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-600">
-            Common questions
+            {t("landing.faq.kicker")}
           </p>
-          <h2 className="mt-3 font-display text-5xl font-light text-ink">Good to know</h2>
+          <h2 className="mt-3 font-display text-5xl font-light text-ink">{t("landing.faq.heading")}</h2>
         </Reveal>
         <Reveal className="mt-12">
           <Accordion type="single" collapsible className="space-y-3">
@@ -324,10 +305,10 @@ export function LandingPage({ navigate }: { navigate: (path: string) => void }) 
           </div>
           <div className="relative">
             <h2 className="mx-auto max-w-2xl font-display text-4xl font-light leading-tight text-balance sm:text-5xl">
-              See what you qualify for today.
+              {t("landing.cta.heading")}
             </h2>
             <p className="mx-auto mt-5 max-w-lg text-lg text-emerald-50">
-              Free, private, and it only takes a few minutes.
+              {t("landing.cta.subtitle")}
             </p>
             <Button
               size="lg"
@@ -335,7 +316,7 @@ export function LandingPage({ navigate }: { navigate: (path: string) => void }) 
               className="mt-8"
               onClick={() => navigate("/check-eligibility")}
             >
-              {t(language, "getStarted")}
+              {t("common.getStarted")}
               <ArrowRight className="transition group-hover:translate-x-0.5" />
             </Button>
           </div>

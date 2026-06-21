@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/sheet";
 import { StatusBadge } from "./StatusBadge";
 import { ProgramGlyph } from "@/lib/programs";
+import { useT } from "@/i18n";
 import type { EligibilityResult, UserProfile } from "@/types/api";
 
 export function ExplainabilityDrawer({
@@ -19,6 +20,7 @@ export function ExplainabilityDrawer({
   profile: UserProfile;
   onClose: () => void;
 }) {
+  const t = useT();
   return (
     <Sheet open={!!result} onOpenChange={(open) => !open && onClose()}>
       <SheetContent className="w-full overflow-y-auto border-l border-border bg-canvas sm:max-w-lg">
@@ -32,7 +34,7 @@ export function ExplainabilityDrawer({
                     {result.program_name}
                   </SheetTitle>
                   <SheetDescription className="sr-only">
-                    Why this eligibility result was produced
+                    {t("explain.descSr")}
                   </SheetDescription>
                   <div className="mt-1">
                     <StatusBadge status={result.status} withIcon />
@@ -45,7 +47,7 @@ export function ExplainabilityDrawer({
 
             <div className="mt-7">
               <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-emerald-700">
-                Rules we checked
+                {t("detail.rulesChecked")}
               </p>
               <div className="space-y-2.5">
                 {result.eligibility_factors.map((factor) => (
@@ -63,13 +65,13 @@ export function ExplainabilityDrawer({
                         }`}
                       >
                         {factor.passes ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
-                        {factor.passes ? "Passes" : "Review"}
+                        {factor.passes ? t("factor.passes") : t("factor.review")}
                       </span>
                     </div>
                     <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm">
-                      <dt className="text-haze">You</dt>
+                      <dt className="text-haze">{t("factor.you")}</dt>
                       <dd className="text-ink">{factor.user_value}</dd>
-                      <dt className="text-haze">Rule</dt>
+                      <dt className="text-haze">{t("factor.rule")}</dt>
                       <dd className="text-ink">{factor.threshold}</dd>
                     </dl>
                     {factor.note && <p className="mt-2 text-xs text-haze">{factor.note}</p>}
@@ -80,15 +82,15 @@ export function ExplainabilityDrawer({
 
             <div className="mt-7 rounded-2xl border border-emerald-200/70 bg-mint/50 p-5 text-sm leading-6 text-haze">
               <p>
-                <span className="font-semibold text-emerald-800">Source:</span> {result.data_source}
+                <span className="font-semibold text-emerald-800">{t("explain.source")}</span>{" "}
+                {result.data_source}
               </p>
               <p className="mt-1">
-                <span className="font-semibold text-emerald-800">Data as of:</span>{" "}
+                <span className="font-semibold text-emerald-800">{t("explain.dataAsOf")}</span>{" "}
                 {result.data_as_of}
               </p>
               <p className="mt-3 text-haze/80">
-                Checked deterministically for a household of {profile.household_size} in{" "}
-                {profile.state}. Final eligibility is determined by the agency you apply to.
+                {t("explain.footer", { count: profile.household_size, state: profile.state })}
               </p>
             </div>
           </>

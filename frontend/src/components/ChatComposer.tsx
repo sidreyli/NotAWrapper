@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowUp } from "lucide-react";
+import { useT } from "@/i18n";
 
 // Auto-growing composer with Enter-to-send (Shift+Enter for newline). Disabled
 // while the assistant is thinking.
@@ -12,6 +13,7 @@ export function ChatComposer({
   disabled?: boolean;
   placeholder?: string;
 }) {
+  const t = useT();
   const [value, setValue] = useState("");
   const ref = useRef<HTMLTextAreaElement | null>(null);
 
@@ -50,7 +52,7 @@ export function ChatComposer({
         type="button"
         onClick={submit}
         disabled={disabled || !value.trim()}
-        aria-label="Send message"
+        aria-label={t("composer.send")}
         className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-emerald-500 text-white shadow-[0_8px_20px_-10px_rgba(12,122,87,0.9)] transition hover:bg-emerald-600 disabled:cursor-not-allowed disabled:bg-muted disabled:text-haze disabled:shadow-none"
       >
         <ArrowUp className="h-5 w-5" strokeWidth={2.4} />

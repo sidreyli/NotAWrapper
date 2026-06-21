@@ -1,6 +1,5 @@
 import { CircleDashed, CircleHelp, MinusCircle, Sparkles, ThumbsUp } from "lucide-react";
-import { statusLabel } from "@/lib/i18n";
-import { useAppState } from "@/state/AppState";
+import { useStatusLabel } from "@/i18n";
 import type { EligibilityStatus } from "@/types/api";
 
 const config: Record<
@@ -43,7 +42,7 @@ export function StatusBadge({
   className?: string;
   withIcon?: boolean;
 }) {
-  const { language } = useAppState();
+  const statusLabel = useStatusLabel();
   const c = config[status] ?? { dot: "bg-haze", chip: "bg-muted text-haze ring-border", icon: CircleDashed };
   const Icon = c.icon;
   return (
@@ -55,7 +54,7 @@ export function StatusBadge({
       ) : (
         <span className={`h-1.5 w-1.5 rounded-full ${c.dot}`} />
       )}
-      {statusLabel(language, status)}
+      {statusLabel(status)}
     </span>
   );
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAppState } from "@/state/AppState";
-import { t } from "@/lib/i18n";
+import { useT } from "@/i18n";
 import { Button } from "./Button";
 import { LanguageToggle } from "./LanguageToggle";
 import { Wordmark } from "./Logo";
@@ -8,6 +8,7 @@ import { AuthControls } from "@/auth/AuthControls";
 
 export function Navbar({ navigate }: { navigate: (path: string) => void }) {
   const { language, setLanguage } = useAppState();
+  const t = useT();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -35,10 +36,10 @@ export function Navbar({ navigate }: { navigate: (path: string) => void }) {
   const overHero = onLanding && !scrolled;
 
   const navItems = [
-    { id: "how-it-works", label: t(language, "navHow") },
-    { id: "programs", label: t(language, "navPrograms") },
-    { id: "trust", label: t(language, "navWhy") },
-    { id: "faq", label: t(language, "navFaq") }
+    { id: "how-it-works", label: t("nav.how") },
+    { id: "programs", label: t("nav.programs") },
+    { id: "trust", label: t("nav.why") },
+    { id: "faq", label: t("nav.faq") }
   ];
 
   const inner = (
@@ -66,7 +67,7 @@ export function Navbar({ navigate }: { navigate: (path: string) => void }) {
           className="hidden sm:inline-flex"
           onClick={() => navigate("/action-center")}
         >
-          Action Center
+          {t("nav.actionCenter")}
         </Button>
       </div>
     </>

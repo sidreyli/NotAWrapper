@@ -12,6 +12,7 @@ import {
   DialogTrigger
 } from "./ui/dialog";
 import type { ActionPlanResponse } from "@/types/api";
+import { useT, type TFunction } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 type Meta = Array<{ label: string; value: string }>;
@@ -44,11 +45,11 @@ function planSummary(markdown: string): string {
   return (out || sentences[0]).trim();
 }
 
-function preparedForLabel(plan: ActionPlanResponse): string | null {
+function preparedForLabel(plan: ActionPlanResponse, t: TFunction): string | null {
   const p = plan.profile as Partial<ActionPlanResponse["profile"]> | undefined;
   if (!p || !p.household_size) return null;
   const where = p.state ? STATE_NAMES[p.state] ?? p.state : null;
-  const household = `household of ${p.household_size}`;
+  const household = t("plan.household", { count: p.household_size });
   return where ? `${household} · ${where}` : household;
 }
 
@@ -63,6 +64,7 @@ export function ActionPlanCard({
   headless?: boolean;
   className?: string;
 }) {
+  const t = useT();
   const summary = planSummary(actionPlan.action_plan_text);
 
   return (
@@ -84,9 +86,9 @@ export function ActionPlanCard({
             </span>
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-emerald-600">
-                Your action plan
+                {t("plan.kicker")}
               </p>
-              <h2 className="font-display text-xl font-semibold text-ink">Your benefits plan</h2>
+              <h2 className="font-display text-xl font-semibold text-ink">{t("plan.cardTitle")}</h2>
             </div>
           </div>
         )}
@@ -112,7 +114,7 @@ export function ActionPlanCard({
           <DialogTrigger asChild>
             <Button size="lg" variant="primary" className="mt-6 w-full">
               <Maximize2 />
-              Open full plan
+              {t("plan.openFull")}
             </Button>
           </DialogTrigger>
           <PlanModal actionPlan={actionPlan} meta={meta} />
@@ -183,14 +185,10 @@ function PlanProse({ content }: { content: string }) {
   );
 }
 
-const nextSteps = [
-  "Gather the documents listed for each program.",
-  "Apply through the official links — one at a time is fine.",
-  "The agency reviews your application and makes the final decision."
-];
-
 function PlanModal({ actionPlan, meta }: { actionPlan: ActionPlanResponse; meta: Meta }) {
-  const preparedFor = preparedForLabel(actionPlan);
+  const t = useT();
+  const preparedFor = preparedForLabel(actionPlan, t);
+  const nextSteps = [t("plan.next1"), t("plan.next2"), t("plan.next3")];
 
   return (
     <DialogContent className="flex h-[92vh] max-h-[92vh] w-[min(82rem,96vw)] max-w-none flex-col gap-0 overflow-hidden p-0">
@@ -203,18 +201,18 @@ function PlanModal({ actionPlan, meta }: { actionPlan: ActionPlanResponse; meta:
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
         <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-gold-300">
           <ListChecks className="h-4 w-4" />
-          Your action plan
+          {t("plan.kicker")}
         </p>
         <DialogTitle className="mt-3 font-display text-[2rem] font-light leading-[1.05] tracking-[-0.01em] sm:text-[2.6rem]">
-          Your plain-language plan
+          {t("plan.modalTitle")}
         </DialogTitle>
         <DialogDescription className="mt-3 max-w-xl text-[0.97rem] leading-7 text-emerald-50/90">
-          Everything we found, in clear words — what fits, why, and exactly what to do next.
+          {t("plan.modalDesc")}
         </DialogDescription>
         {preparedFor && (
           <p className="mt-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-medium text-emerald-50/90 backdrop-blur">
             <span className="h-1.5 w-1.5 rounded-full bg-gold-300" />
-            Prepared for a {preparedFor}
+            {t("plan.preparedFor", { detail: preparedFor })}
           </p>
         )}
       </div>
@@ -231,7 +229,7 @@ function PlanModal({ actionPlan, meta }: { actionPlan: ActionPlanResponse; meta:
           {meta.length > 0 && (
             <div className="space-y-3">
               <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-emerald-700">
-                At a glance
+                {t("plan.atAGlance")}
               </p>
               {meta.map((m) => (
                 <div
@@ -251,7 +249,7 @@ function PlanModal({ actionPlan, meta }: { actionPlan: ActionPlanResponse; meta:
 
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-emerald-700">
-              What happens next
+              {t("plan.whatNext")}
             </p>
             <ol className="mt-3 space-y-3.5">
               {nextSteps.map((step, i) => (
@@ -274,7 +272,7 @@ function PlanModal({ actionPlan, meta }: { actionPlan: ActionPlanResponse; meta:
         </p>
         <DialogClose asChild>
           <Button size="md" variant="soft" className="shrink-0">
-            Close
+            {t("common.close")}
           </Button>
         </DialogClose>
       </div>
